@@ -1,0 +1,2 @@
+CREATE TABLE IF NOT EXISTS backup_history(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),tenant_id uuid NOT NULL REFERENCES tenants(id),file_name text NOT NULL,status text NOT NULL CHECK(status IN('creating','completed','failed','restored')),size_bytes bigint NOT NULL DEFAULT 0,checksum text,error_message text,created_by uuid REFERENCES users(id),created_at timestamptz NOT NULL DEFAULT now(),completed_at timestamptz);
+CREATE INDEX IF NOT EXISTS backup_history_tenant_idx ON backup_history(tenant_id,created_at DESC);

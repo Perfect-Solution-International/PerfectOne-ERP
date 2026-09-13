@@ -1,0 +1,5 @@
+package main
+
+import("encoding/json";"net/http";"strings";"github.com/jackc/pgx/v5/pgxpool")
+
+func chequeAction(db *pgxpool.Pool)http.HandlerFunc{return func(w http.ResponseWriter,r *http.Request){kind,action:=r.PathValue("kind"),r.PathValue("action");if kind!="customer"&&kind!="supplier"{http.Error(w,"unknown payment type",404);return};if action=="bounce"{reversePayment(db,kind).ServeHTTP(w,r);return};if action!="clear"{http.Error(w,"unknown cheque action",404);return};table:="customer_payments";if kind=="supplier"{table="supplier_payments"};var x struct{Note string `json:"note"`};json.NewDecoder(r.Body).Decode(&x);tag,err:=db.Exec(r.Context(),`UPDATE `+table+` SET clearance_status='cleared',notes=concat_ws(E'\n',notes,NULLIF($3,'')) WHERE id=$1 AND tenant_id=$2 AND status='finalized' AND clearance_status='pending'`,r.PathValue("id"),claimsFrom(r).Tenant,"Cheque cleared: "+strings.TrimSpace(x.Note));if err!=nil||tag.RowsAffected()!=1{http.Error(w,"pending cheque not found",409);return};auditUserAction(r,db,"CHEQUE_CLEARED",r.PathValue("id"),x);w.WriteHeader(204)}}

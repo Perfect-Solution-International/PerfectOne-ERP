@@ -1,0 +1,14 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+CREATE TYPE user_role AS ENUM ('super_admin','manager','accountant','cashier','stock_manager');
+CREATE TABLE users(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),name text NOT NULL,email text UNIQUE NOT NULL,password_hash text NOT NULL,role user_role NOT NULL DEFAULT 'cashier',created_at timestamptz DEFAULT now());
+CREATE TABLE categories(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),name text NOT NULL UNIQUE);
+CREATE TABLE suppliers(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),name text NOT NULL,phone text,email text,balance numeric(14,2) DEFAULT 0);
+CREATE TABLE customers(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),name text NOT NULL,phone text UNIQUE,credit_limit numeric(14,2) DEFAULT 0,balance numeric(14,2) DEFAULT 0);
+CREATE TABLE products(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),name text NOT NULL,sku text UNIQUE NOT NULL,barcode text UNIQUE,category_id uuid REFERENCES categories(id),purchase_price numeric(14,2) DEFAULT 0,selling_price numeric(14,2) NOT NULL,stock_quantity numeric(14,3) NOT NULL DEFAULT 0,minimum_stock numeric(14,3) DEFAULT 0,is_active boolean DEFAULT true,created_at timestamptz DEFAULT now());
+CREATE TABLE stock_batches(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),product_id uuid REFERENCES products(id),batch_no text,expiry_date date,available_qty numeric(14,3) NOT NULL);
+CREATE TABLE purchases(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),invoice_no text UNIQUE NOT NULL,supplier_id uuid REFERENCES suppliers(id),total numeric(14,2) NOT NULL,paid_amount numeric(14,2) DEFAULT 0,created_at timestamptz DEFAULT now());
+CREATE TABLE sales(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),invoice_no text UNIQUE NOT NULL,cashier_id uuid REFERENCES users(id),customer_id uuid REFERENCES customers(id),total numeric(14,2) NOT NULL,paid_amount numeric(14,2) NOT NULL,balance numeric(14,2) DEFAULT 0,created_at timestamptz DEFAULT now());
+CREATE TABLE sale_items(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),sale_id uuid REFERENCES sales(id) ON DELETE CASCADE,product_id uuid REFERENCES products(id),quantity numeric(14,3) NOT NULL,unit_price numeric(14,2) NOT NULL,total numeric(14,2) NOT NULL);
+CREATE TABLE stock_movements(id uuid PRIMARY KEY DEFAULT gen_random_uuid(),product_id uuid REFERENCES products(id),kind text NOT NULL,quantity numeric(14,3) NOT NULL,created_at timestamptz DEFAULT now());
+CREATE INDEX products_stock_idx ON products(stock_quantity); CREATE INDEX batches_expiry_idx ON stock_batches(expiry_date);
+CREATE OR REPLACE FUNCTION next_invoice_no() RETURNS text LANGUAGE sql AS $$SELECT 'INV-'||to_char(CURRENT_DATE,'YYYYMMDD')||'-'||lpad((count(*)+1)::text,4,'0') FROM sales WHERE created_at::date=CURRENT_DATE$$;

@@ -1,0 +1,47 @@
+# ---------------------------------------------------------------------------
+# Database dumps — REAL BUSINESS DATA. Never commit these.
+# They contain the users, customers and suppliers tables. Once a dump reaches
+# GitHub it stays in the history even after the file is deleted, so keep the
+# whole directories out rather than listing individual files.
+# ---------------------------------------------------------------------------
+backups/
+deploy-backups/
+*.dump
+*.sql.gz
+
+# Dependencies and build output
+node_modules/
+.next/
+# throwaway build-verification output: .next-build-check, .next-build-payments-check, ...
+.next-*/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Go build artefacts
+services/api/api
+services/api/api.exe
+*.exe
+*.test
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Editor and OS noise
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+
+# Logs and caches
+*.log
+npm-debug.log*
+yarn-error.log*
+.cache/
+coverage/

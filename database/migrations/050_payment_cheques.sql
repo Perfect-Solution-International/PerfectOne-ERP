@@ -1,0 +1,12 @@
+ALTER TABLE customer_payments ADD COLUMN IF NOT EXISTS cheque_number text;
+ALTER TABLE customer_payments ADD COLUMN IF NOT EXISTS cheque_date date;
+ALTER TABLE customer_payments ADD COLUMN IF NOT EXISTS clearance_status text NOT NULL DEFAULT 'not_applicable';
+ALTER TABLE customer_payments DROP CONSTRAINT IF EXISTS customer_payments_clearance_status_check;
+ALTER TABLE customer_payments ADD CONSTRAINT customer_payments_clearance_status_check CHECK(clearance_status IN('not_applicable','pending','cleared','bounced'));
+ALTER TABLE supplier_payments ADD COLUMN IF NOT EXISTS cheque_number text;
+ALTER TABLE supplier_payments ADD COLUMN IF NOT EXISTS cheque_date date;
+ALTER TABLE supplier_payments ADD COLUMN IF NOT EXISTS clearance_status text NOT NULL DEFAULT 'not_applicable';
+ALTER TABLE supplier_payments DROP CONSTRAINT IF EXISTS supplier_payments_clearance_status_check;
+ALTER TABLE supplier_payments ADD CONSTRAINT supplier_payments_clearance_status_check CHECK(clearance_status IN('not_applicable','pending','cleared','bounced'));
+CREATE INDEX IF NOT EXISTS customer_cheque_queue_idx ON customer_payments(tenant_id,clearance_status,cheque_date) WHERE clearance_status='pending';
+CREATE INDEX IF NOT EXISTS supplier_cheque_queue_idx ON supplier_payments(tenant_id,clearance_status,cheque_date) WHERE clearance_status='pending';

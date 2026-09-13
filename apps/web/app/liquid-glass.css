@@ -1,0 +1,3137 @@
+/* =====================================================================
+   PERFECTONE ERP — LIQUID GLASS DESIGN SYSTEM
+   ---------------------------------------------------------------------
+   Loaded AFTER globals.css (see layout.tsx) so it is the final authority
+   on material, colour and depth for every route in the product.
+
+   Goals:
+     1. Kill the flat near-black + red-fog look that caused eye strain.
+     2. Give every surface one real material: translucent glass that
+        refracts a calm, multi-hue ambient, lit from the top edge.
+     3. Raise text contrast to comfortable levels at every size.
+     4. Keep brand red for *accents and actions only* — never as ambience.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   1. TOKENS
+   ------------------------------------------------------------------ */
+:root:root:root {
+  /* neutral ground — very slightly cool so glass reads as glass */
+  --canvas:#eef1f7;
+  --surface:rgba(255,255,255,.78);
+  --surface-2:rgba(255,255,255,.55);
+  --solid:#ffffff;
+  --solid-2:#f4f6fa;
+
+  --border:rgba(17,24,39,.10);
+  --border-strong:rgba(17,24,39,.16);
+
+  --text:#12151c;
+  --subtle:#5a6273;
+  --faint:#828b9c;
+
+  --brand:#e2141f;
+  --brand-dark:#b3040e;
+  --brand-soft:rgba(226,20,31,.10);
+  --brand-ring:rgba(226,20,31,.22);
+  --primary:var(--brand);
+  --primary-dark:var(--brand-dark);
+
+  --success:#0f9d58;
+  --success-dark:#0b7c45;
+  --success-soft:rgba(15,157,88,.12);
+  --warning:#b5760d;
+  --warning-soft:rgba(181,118,13,.13);
+  --danger:#d0402c;
+  --danger-soft:rgba(208,64,44,.12);
+  --info:#2f6fed;
+  --info-soft:rgba(47,111,237,.12);
+
+  --line:var(--border);
+  --ink:var(--text);
+  --muted:var(--subtle);
+  --green:var(--success);
+  --blue:var(--info);
+  --nav:#0f1116;
+  --nav-soft:#1a1d24;
+
+  /* --- the glass material --- */
+  --glass:linear-gradient(158deg, rgba(255,255,255,.90) 0%, rgba(255,255,255,.62) 48%, rgba(255,255,255,.74) 100%);
+  --glass-2:linear-gradient(158deg, rgba(255,255,255,.66) 0%, rgba(255,255,255,.40) 100%);
+  --glass-brd:rgba(255,255,255,.75);
+  --glass-brd-2:rgba(17,24,39,.09);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.95);
+  --glass-lo:inset 0 -1px 0 rgba(17,24,39,.05);
+  --glass-blur:blur(24px) saturate(170%);
+  --glass-blur-lg:blur(40px) saturate(180%);
+  --glass-sheen:linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,0) 58%);
+
+  --shadow-xs:0 1px 2px rgba(16,22,38,.06);
+  --shadow:0 10px 28px rgba(16,22,38,.10), 0 2px 6px rgba(16,22,38,.05);
+  --shadow-lg:0 30px 70px rgba(16,22,38,.18), 0 6px 18px rgba(16,22,38,.08);
+  --shadow-brand:0 10px 26px rgba(226,20,31,.26);
+
+  --radius-xs:8px;
+  --radius-sm:11px;
+  --radius:16px;
+  --radius-lg:22px;
+  --radius-xl:28px;
+  --radius-pill:999px;
+
+  --ease:cubic-bezier(.32,.72,.28,1);
+}
+
+:root[data-theme="dark"]:root:root,
+:root[data-theme="dark"] {
+  --canvas:#0a0c13;
+  --surface:rgba(255,255,255,.08);
+  --surface-2:rgba(255,255,255,.05);
+  --solid:#14161d;
+  --solid-2:#1b1e26;
+
+  --border:rgba(255,255,255,.10);
+  --border-strong:rgba(255,255,255,.17);
+
+  --text:#eef0f5;
+  --subtle:#a9b0bf;
+  --faint:#79808f;
+
+  --brand:#ff4d58;
+  --brand-dark:#e51d2a;
+  --brand-soft:rgba(255,77,88,.15);
+  --brand-ring:rgba(255,77,88,.22);
+  --primary:var(--brand);
+  --primary-dark:var(--brand-dark);
+
+  --success:#3fce8b;
+  --success-dark:#27b273;
+  --success-soft:rgba(63,206,139,.15);
+  --warning:#f0b354;
+  --warning-soft:rgba(240,179,84,.15);
+  --danger:#ff7a66;
+  --danger-soft:rgba(255,122,102,.15);
+  --info:#6d9bff;
+  --info-soft:rgba(109,155,255,.16);
+
+  --line:var(--border);
+  --ink:var(--text);
+  --muted:var(--subtle);
+  --green:var(--success);
+  --blue:var(--info);
+  --nav:rgba(255,255,255,.045);
+  --nav-soft:rgba(255,255,255,.07);
+
+  --glass:linear-gradient(158deg, rgba(255,255,255,.135) 0%, rgba(255,255,255,.045) 44%, rgba(255,255,255,.075) 100%);
+  --glass-2:linear-gradient(158deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.03) 100%);
+  --glass-brd:rgba(255,255,255,.155);
+  --glass-brd-2:rgba(255,255,255,.105);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.20);
+  --glass-lo:inset 0 -1px 0 rgba(0,0,0,.28);
+  --glass-blur:blur(26px) saturate(180%);
+  --glass-blur-lg:blur(44px) saturate(190%);
+  --glass-sheen:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0) 58%);
+
+  --shadow-xs:0 1px 2px rgba(0,0,0,.4);
+  --shadow:0 16px 40px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.32);
+  --shadow-lg:0 36px 90px rgba(0,0,0,.62), 0 8px 22px rgba(0,0,0,.45);
+  --shadow-brand:0 12px 30px rgba(255,60,72,.30);
+}
+
+@media (prefers-color-scheme:dark) {
+  :root:not([data-theme="light"]):root:root {
+    --canvas:#0a0c13;
+    --surface:rgba(255,255,255,.08);
+    --surface-2:rgba(255,255,255,.05);
+    --solid:#14161d; --solid-2:#1b1e26;
+    --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.17);
+    --text:#eef0f5; --subtle:#a9b0bf; --faint:#79808f;
+    --brand:#ff4d58; --brand-dark:#e51d2a; --brand-soft:rgba(255,77,88,.15); --brand-ring:rgba(255,77,88,.22);
+    --success:#3fce8b; --success-dark:#27b273; --success-soft:rgba(63,206,139,.15);
+    --warning:#f0b354; --warning-soft:rgba(240,179,84,.15);
+    --danger:#ff7a66; --danger-soft:rgba(255,122,102,.15);
+    --info:#6d9bff; --info-soft:rgba(109,155,255,.16);
+    --line:var(--border); --ink:var(--text); --muted:var(--subtle); --green:var(--success); --blue:var(--info);
+    --nav:rgba(255,255,255,.045); --nav-soft:rgba(255,255,255,.07);
+    --glass:linear-gradient(158deg, rgba(255,255,255,.135) 0%, rgba(255,255,255,.045) 44%, rgba(255,255,255,.075) 100%);
+    --glass-2:linear-gradient(158deg, rgba(255,255,255,.08) 0%, rgba(255,255,255,.03) 100%);
+    --glass-brd:rgba(255,255,255,.155); --glass-brd-2:rgba(255,255,255,.105);
+    --glass-hi:inset 0 1px 0 rgba(255,255,255,.20); --glass-lo:inset 0 -1px 0 rgba(0,0,0,.28);
+    --glass-sheen:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,0) 58%);
+    --shadow:0 16px 40px rgba(0,0,0,.45), 0 2px 8px rgba(0,0,0,.32);
+    --shadow-lg:0 36px 90px rgba(0,0,0,.62), 0 8px 22px rgba(0,0,0,.45);
+    --shadow-brand:0 12px 30px rgba(255,60,72,.30);
+  }
+}
+
+/* ---------------------------------------------------------------------
+   2. BASE + AMBIENT
+   The old build painted a red fog over near-black. That is what made the
+   product tiring to read. Replaced with a calm four-point aurora: a warm
+   ember, a cool indigo, a teal and a violet, all at low alpha. Glass has
+   something worth refracting, and nothing competes with body copy.
+   ------------------------------------------------------------------ */
+html { color-scheme:light dark; }
+
+html body {
+  background:var(--canvas) !important;
+  color:var(--text) !important;
+  font-family:'Plus Jakarta Sans', ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-size:13.5px;
+  line-height:1.6;
+  letter-spacing:.002em;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+
+html body::before {
+  content:"";
+  position:fixed; inset:0; z-index:0; pointer-events:none;
+  background:
+    radial-gradient(1100px 720px at 82% -14%, rgba(226,20,31,.10), transparent 62%),
+    radial-gradient(900px 700px at -6% 8%,  rgba(64,104,224,.12), transparent 60%),
+    radial-gradient(820px 640px at 58% 112%, rgba(20,170,168,.10), transparent 60%),
+    radial-gradient(700px 560px at 26% 58%, rgba(126,92,220,.08), transparent 62%);
+}
+:root[data-theme="dark"] body::before,
+:root:not([data-theme="light"]) body::before {
+  background:
+    radial-gradient(1150px 820px at 86% -18%, rgba(255,58,74,.26), transparent 60%),
+    radial-gradient(1050px 820px at -10% 4%,  rgba(64,110,255,.24), transparent 58%),
+    radial-gradient(950px 760px at 54% 116%,  rgba(18,198,190,.19), transparent 58%),
+    radial-gradient(820px 680px at 30% 54%,   rgba(150,100,255,.16), transparent 60%);
+}
+/* grain: stops the big gradients from banding on cheap panels */
+html body::after {
+  content:"";
+  position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.035;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/></filter><rect width='140' height='140' filter='url(%23n)' opacity='.5'/></svg>");
+}
+body > * { position:relative; z-index:1; }
+
+/* the ambient now lives on <body>, so the old per-shell fogs must go */
+:root[data-theme="dark"] .app::before,
+:root:not([data-theme="light"]) .app::before,
+aside.sidebar.modernSidebar::before { display:none !important; content:none !important; }
+
+main.shell, .shell, .app,
+:root[data-theme="dark"] .app,
+:root[data-theme="dark"] .shell,
+:root[data-theme="dark"] main.shell { background:transparent !important; }
+
+h1,h2,h3,h4,h5 { color:var(--text); letter-spacing:-.018em; font-weight:800; }
+h1 { letter-spacing:-.028em; }
+p, li, td, dd { color:inherit; }
+
+::selection { background:var(--brand-ring); color:var(--text); }
+
+*::-webkit-scrollbar { width:11px; height:11px; }
+*::-webkit-scrollbar-track { background:transparent; }
+*::-webkit-scrollbar-thumb {
+  background:var(--border-strong); border-radius:var(--radius-pill);
+  border:3px solid transparent; background-clip:content-box;
+}
+*::-webkit-scrollbar-thumb:hover { background:var(--faint); background-clip:content-box; }
+* { scrollbar-width:thin; scrollbar-color:var(--border-strong) transparent; }
+
+:focus-visible {
+  outline:2px solid var(--brand) !important;
+  outline-offset:2px !important;
+  border-radius:var(--radius-xs);
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *, *::before, *::after { animation-duration:.001ms !important; transition-duration:.001ms !important; }
+}
+
+/* ---------------------------------------------------------------------
+   3. THE GLASS SURFACE
+   One material, used everywhere. `isolation` is cleared on the shell
+   wrappers so children can still sample the page-level ambient as their
+   backdrop (an isolated stacking context would cut the blur off).
+   ------------------------------------------------------------------ */
+.app, main.shell, aside.sidebar, aside.sidebar.modernSidebar { isolation:auto !important; }
+
+.metricCard, .insightCard, .dataCard, .card, .panel, .statusCardLike,
+.productTableCard, .financeMetric, .financeGuide, .financeForm, .financeHistory, .financeActionPanel,
+.financeMetrics > *, .financeWorkspace > .financeTabs, .financeNotice,
+.reportCatalogue, .reportFilters, .reportResult,
+.roleList, .roleMatrix, .permissionPanel, .matrixLegend,
+.settingsSection, .settingsForm, .settingsWorkspace > section,
+.backupScheduleCard, .importCard, .importSteps, .importSource, .fileDrop, .mappingGrid, .sheetPreview,
+.approvalQueue, .adminSummary, .notificationList, .auditDrawer,
+.syncMetrics, .syncList, .syncFilters,
+.expirySummary, .expiryTable, .expiryFilters, .expiryViews,
+.catalogStats, .catalogueGrid > *, .taxonomyList, .taxonomyRows, .taxonomyTools,
+.branchGrid > *, .branchEditor,
+.contactProfile, .profileMetrics, .profileLedger, .directoryTable, .salesTable, .salesSummary, .salesFilters, .salesWorkspace > section,
+.accountingTable, .accountingFilters, .accountingEditor, .coaGrid, .journalEditor, .journalDetail, .journalSummary, .statement, .purchaseLineCard, .purchaseSnapshot, .purchaseTotal, .purchaseSteps, .purchaseFooter,
+.returnImpact, .returnSection, .returnWorkspace > section, .returnSteps, .returnHistory,
+.returnReviewGrid, .returnPurchasePicker, .returnGrandTotal,
+.formSection, .saasForm, .productFormSection, .formIntro, .formInsight, .documentForm,
+.workflowForm, .workflowRecords, .workflowTabs, .procurementRecords, .procurementForm,
+.inventoryRecords, .inventoryWorkflowForm, .inventoryFlow, .inventoryCallout, .inventoryFormHeader,
+.operationContent, .operationForm, .tabRail,
+.registerSummary, .registerGate, .cashierMetrics, .cashierControl, .stockSnapshot,
+.priceEditor, .priceHistoryPanel, .priceSummary, .priceTimeline,
+.promotionEditor, .promotionGrid > *, .promotionUsage, .discountPolicy, .policyGrid,
+.receiptPaper, .receiptPreview, .invoicePanel, .invoiceDocument, .entrySection, .selectedSection, .transferLineList, .heldSaleList,
+.performanceList, .dashboardPanels > *, .dashboardHero,
+.barcodeShell, .barcodeGrid > *, .barcodeInput,
+.emptyState, .dashboardEmpty, .emptyCatalogue, .emptyTable, .noMenuResults,
+.reconcileSummary, .paymentSummary, .splitPayments, .validationSummary,
+.dataToolsPage > section, .archiveList, .archiveSafety, .archiveToolbar,
+.posCheckout > article, .posTopActions,
+.pfCard, .pfStatusCard {
+  background:var(--glass) !important;
+  -webkit-backdrop-filter:var(--glass-blur);
+  backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-brd) !important;
+  border-radius:var(--radius-lg) !important;
+  box-shadow:var(--glass-hi), var(--glass-lo), var(--shadow) !important;
+  color:var(--text);
+  position:relative;
+}
+
+/* second-level glass: panels that sit *inside* another glass panel must
+   not double-blur, or the stack turns to milk */
+.metricCard .metricIcon, .insightCard > header, .dataCard > header,
+.journalLine, .purchaseLineHeader, .lineCoreFields, .returnItemFacts,
+.previewItem, .receiptItem, .invoiceMeta, .invoiceIdentity,
+.formSectionIntro, .sectionHeading, .documentIdentity, .coaGroup > header, .statementGroup > header, .settingsFields, .dialogFieldGrid,
+.returnLines label, .checkLabel, .supplierProduct, .masterPriceOptions,
+.expiryPagination, .inventoryFormGrid, .financeFormGrid, .reportFilterGrid {
+  -webkit-backdrop-filter:none;
+  backdrop-filter:none;
+}
+
+
+/* Nested glass de-escalation. A panel that sits inside another panel keeps
+   the tint but drops the blur, the outer shadow and the lit top edge —
+   otherwise a three-deep stack (document > step > field group) turns milky
+   and every boundary disappears. */
+:is(.metricCard, .insightCard, .dataCard, .card, .panel, .statusCardLike, .productTableCard, .financeMetric, .financeGuide, .financeForm, .financeHistory, .financeActionPanel, .financeMetrics > *, .financeWorkspace > .financeTabs, .financeNotice, .reportCatalogue, .reportFilters, .reportResult, .roleList, .roleMatrix, .permissionPanel, .matrixLegend, .settingsSection, .settingsForm, .settingsWorkspace > section, .backupScheduleCard, .importCard, .importSteps, .importSource, .fileDrop, .mappingGrid, .sheetPreview, .approvalQueue, .adminSummary, .notificationList, .auditDrawer, .syncMetrics, .syncList, .syncFilters, .expirySummary, .expiryTable, .expiryFilters, .expiryViews, .catalogStats, .catalogueGrid > *, .taxonomyList, .taxonomyRows, .taxonomyTools, .branchGrid > *, .branchEditor, .contactProfile, .profileMetrics, .profileLedger, .directoryTable, .salesTable, .salesSummary, .salesFilters, .salesWorkspace > section, .accountingTable, .accountingFilters, .accountingEditor, .coaGrid, .journalEditor, .journalDetail, .journalSummary, .statement, .purchaseLineCard, .purchaseSnapshot, .purchaseTotal, .purchaseSteps, .purchaseFooter, .returnImpact, .returnSection, .returnWorkspace > section, .returnSteps, .returnHistory, .returnReviewGrid, .returnPurchasePicker, .returnGrandTotal, .formSection, .saasForm, .productFormSection, .formIntro, .formInsight, .documentForm, .workflowForm, .workflowRecords, .workflowTabs, .procurementRecords, .procurementForm, .inventoryRecords, .inventoryWorkflowForm, .inventoryFlow, .inventoryCallout, .inventoryFormHeader, .operationContent, .operationForm, .tabRail, .registerSummary, .registerGate, .cashierMetrics, .cashierControl, .stockSnapshot, .priceEditor, .priceHistoryPanel, .priceSummary, .priceTimeline, .promotionEditor, .promotionGrid > *, .promotionUsage, .discountPolicy, .policyGrid, .receiptPaper, .receiptPreview, .invoicePanel, .invoiceDocument, .entrySection, .selectedSection, .transferLineList, .heldSaleList, .performanceList, .dashboardPanels > *, .dashboardHero, .barcodeShell, .barcodeGrid > *, .barcodeInput, .emptyState, .dashboardEmpty, .emptyCatalogue, .emptyTable, .noMenuResults, .reconcileSummary, .paymentSummary, .splitPayments, .validationSummary, .dataToolsPage > section, .archiveList, .archiveSafety, .archiveToolbar, .posCheckout > article, .posTopActions, .pfCard, .pfStatusCard) :is(.metricCard, .insightCard, .dataCard, .card, .panel, .statusCardLike, .productTableCard, .financeMetric, .financeGuide, .financeForm, .financeHistory, .financeActionPanel, .financeMetrics > *, .financeWorkspace > .financeTabs, .financeNotice, .reportCatalogue, .reportFilters, .reportResult, .roleList, .roleMatrix, .permissionPanel, .matrixLegend, .settingsSection, .settingsForm, .settingsWorkspace > section, .backupScheduleCard, .importCard, .importSteps, .importSource, .fileDrop, .mappingGrid, .sheetPreview, .approvalQueue, .adminSummary, .notificationList, .auditDrawer, .syncMetrics, .syncList, .syncFilters, .expirySummary, .expiryTable, .expiryFilters, .expiryViews, .catalogStats, .catalogueGrid > *, .taxonomyList, .taxonomyRows, .taxonomyTools, .branchGrid > *, .branchEditor, .contactProfile, .profileMetrics, .profileLedger, .directoryTable, .salesTable, .salesSummary, .salesFilters, .salesWorkspace > section, .accountingTable, .accountingFilters, .accountingEditor, .coaGrid, .journalEditor, .journalDetail, .journalSummary, .statement, .purchaseLineCard, .purchaseSnapshot, .purchaseTotal, .purchaseSteps, .purchaseFooter, .returnImpact, .returnSection, .returnWorkspace > section, .returnSteps, .returnHistory, .returnReviewGrid, .returnPurchasePicker, .returnGrandTotal, .formSection, .saasForm, .productFormSection, .formIntro, .formInsight, .documentForm, .workflowForm, .workflowRecords, .workflowTabs, .procurementRecords, .procurementForm, .inventoryRecords, .inventoryWorkflowForm, .inventoryFlow, .inventoryCallout, .inventoryFormHeader, .operationContent, .operationForm, .tabRail, .registerSummary, .registerGate, .cashierMetrics, .cashierControl, .stockSnapshot, .priceEditor, .priceHistoryPanel, .priceSummary, .priceTimeline, .promotionEditor, .promotionGrid > *, .promotionUsage, .discountPolicy, .policyGrid, .receiptPaper, .receiptPreview, .invoicePanel, .invoiceDocument, .entrySection, .selectedSection, .transferLineList, .heldSaleList, .performanceList, .dashboardPanels > *, .dashboardHero, .barcodeShell, .barcodeGrid > *, .barcodeInput, .emptyState, .dashboardEmpty, .emptyCatalogue, .emptyTable, .noMenuResults, .reconcileSummary, .paymentSummary, .splitPayments, .validationSummary, .dataToolsPage > section, .archiveList, .archiveSafety, .archiveToolbar, .posCheckout > article, .posTopActions, .pfCard, .pfStatusCard) {
+  background:var(--glass-2) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius) !important;
+  box-shadow:none !important;
+}
+:is(.metricCard, .insightCard, .dataCard, .card, .panel, .statusCardLike, .productTableCard, .financeMetric, .financeGuide, .financeForm, .financeHistory, .financeActionPanel, .financeMetrics > *, .financeWorkspace > .financeTabs, .financeNotice, .reportCatalogue, .reportFilters, .reportResult, .roleList, .roleMatrix, .permissionPanel, .matrixLegend, .settingsSection, .settingsForm, .settingsWorkspace > section, .backupScheduleCard, .importCard, .importSteps, .importSource, .fileDrop, .mappingGrid, .sheetPreview, .approvalQueue, .adminSummary, .notificationList, .auditDrawer, .syncMetrics, .syncList, .syncFilters, .expirySummary, .expiryTable, .expiryFilters, .expiryViews, .catalogStats, .catalogueGrid > *, .taxonomyList, .taxonomyRows, .taxonomyTools, .branchGrid > *, .branchEditor, .contactProfile, .profileMetrics, .profileLedger, .directoryTable, .salesTable, .salesSummary, .salesFilters, .salesWorkspace > section, .accountingTable, .accountingFilters, .accountingEditor, .coaGrid, .journalEditor, .journalDetail, .journalSummary, .statement, .purchaseLineCard, .purchaseSnapshot, .purchaseTotal, .purchaseSteps, .purchaseFooter, .returnImpact, .returnSection, .returnWorkspace > section, .returnSteps, .returnHistory, .returnReviewGrid, .returnPurchasePicker, .returnGrandTotal, .formSection, .saasForm, .productFormSection, .formIntro, .formInsight, .documentForm, .workflowForm, .workflowRecords, .workflowTabs, .procurementRecords, .procurementForm, .inventoryRecords, .inventoryWorkflowForm, .inventoryFlow, .inventoryCallout, .inventoryFormHeader, .operationContent, .operationForm, .tabRail, .registerSummary, .registerGate, .cashierMetrics, .cashierControl, .stockSnapshot, .priceEditor, .priceHistoryPanel, .priceSummary, .priceTimeline, .promotionEditor, .promotionGrid > *, .promotionUsage, .discountPolicy, .policyGrid, .receiptPaper, .receiptPreview, .invoicePanel, .invoiceDocument, .entrySection, .selectedSection, .transferLineList, .heldSaleList, .performanceList, .dashboardPanels > *, .dashboardHero, .barcodeShell, .barcodeGrid > *, .barcodeInput, .emptyState, .dashboardEmpty, .emptyCatalogue, .emptyTable, .noMenuResults, .reconcileSummary, .paymentSummary, .splitPayments, .validationSummary, .dataToolsPage > section, .archiveList, .archiveSafety, .archiveToolbar, .posCheckout > article, .posTopActions, .pfCard, .pfStatusCard) :is(.metricCard, .insightCard, .dataCard, .card, .panel, .statusCardLike, .productTableCard, .financeMetric, .financeGuide, .financeForm, .financeHistory, .financeActionPanel, .financeMetrics > *, .financeWorkspace > .financeTabs, .financeNotice, .reportCatalogue, .reportFilters, .reportResult, .roleList, .roleMatrix, .permissionPanel, .matrixLegend, .settingsSection, .settingsForm, .settingsWorkspace > section, .backupScheduleCard, .importCard, .importSteps, .importSource, .fileDrop, .mappingGrid, .sheetPreview, .approvalQueue, .adminSummary, .notificationList, .auditDrawer, .syncMetrics, .syncList, .syncFilters, .expirySummary, .expiryTable, .expiryFilters, .expiryViews, .catalogStats, .catalogueGrid > *, .taxonomyList, .taxonomyRows, .taxonomyTools, .branchGrid > *, .branchEditor, .contactProfile, .profileMetrics, .profileLedger, .directoryTable, .salesTable, .salesSummary, .salesFilters, .salesWorkspace > section, .accountingTable, .accountingFilters, .accountingEditor, .coaGrid, .journalEditor, .journalDetail, .journalSummary, .statement, .purchaseLineCard, .purchaseSnapshot, .purchaseTotal, .purchaseSteps, .purchaseFooter, .returnImpact, .returnSection, .returnWorkspace > section, .returnSteps, .returnHistory, .returnReviewGrid, .returnPurchasePicker, .returnGrandTotal, .formSection, .saasForm, .productFormSection, .formIntro, .formInsight, .documentForm, .workflowForm, .workflowRecords, .workflowTabs, .procurementRecords, .procurementForm, .inventoryRecords, .inventoryWorkflowForm, .inventoryFlow, .inventoryCallout, .inventoryFormHeader, .operationContent, .operationForm, .tabRail, .registerSummary, .registerGate, .cashierMetrics, .cashierControl, .stockSnapshot, .priceEditor, .priceHistoryPanel, .priceSummary, .priceTimeline, .promotionEditor, .promotionGrid > *, .promotionUsage, .discountPolicy, .policyGrid, .receiptPaper, .receiptPreview, .invoicePanel, .invoiceDocument, .entrySection, .selectedSection, .transferLineList, .heldSaleList, .performanceList, .dashboardPanels > *, .dashboardHero, .barcodeShell, .barcodeGrid > *, .barcodeInput, .emptyState, .dashboardEmpty, .emptyCatalogue, .emptyTable, .noMenuResults, .reconcileSummary, .paymentSummary, .splitPayments, .validationSummary, .dataToolsPage > section, .archiveList, .archiveSafety, .archiveToolbar, .posCheckout > article, .posTopActions, .pfCard, .pfStatusCard) :is(.metricCard, .insightCard, .dataCard, .card, .panel, .statusCardLike, .productTableCard, .financeMetric, .financeGuide, .financeForm, .financeHistory, .financeActionPanel, .financeMetrics > *, .financeWorkspace > .financeTabs, .financeNotice, .reportCatalogue, .reportFilters, .reportResult, .roleList, .roleMatrix, .permissionPanel, .matrixLegend, .settingsSection, .settingsForm, .settingsWorkspace > section, .backupScheduleCard, .importCard, .importSteps, .importSource, .fileDrop, .mappingGrid, .sheetPreview, .approvalQueue, .adminSummary, .notificationList, .auditDrawer, .syncMetrics, .syncList, .syncFilters, .expirySummary, .expiryTable, .expiryFilters, .expiryViews, .catalogStats, .catalogueGrid > *, .taxonomyList, .taxonomyRows, .taxonomyTools, .branchGrid > *, .branchEditor, .contactProfile, .profileMetrics, .profileLedger, .directoryTable, .salesTable, .salesSummary, .salesFilters, .salesWorkspace > section, .accountingTable, .accountingFilters, .accountingEditor, .coaGrid, .journalEditor, .journalDetail, .journalSummary, .statement, .purchaseLineCard, .purchaseSnapshot, .purchaseTotal, .purchaseSteps, .purchaseFooter, .returnImpact, .returnSection, .returnWorkspace > section, .returnSteps, .returnHistory, .returnReviewGrid, .returnPurchasePicker, .returnGrandTotal, .formSection, .saasForm, .productFormSection, .formIntro, .formInsight, .documentForm, .workflowForm, .workflowRecords, .workflowTabs, .procurementRecords, .procurementForm, .inventoryRecords, .inventoryWorkflowForm, .inventoryFlow, .inventoryCallout, .inventoryFormHeader, .operationContent, .operationForm, .tabRail, .registerSummary, .registerGate, .cashierMetrics, .cashierControl, .stockSnapshot, .priceEditor, .priceHistoryPanel, .priceSummary, .priceTimeline, .promotionEditor, .promotionGrid > *, .promotionUsage, .discountPolicy, .policyGrid, .receiptPaper, .receiptPreview, .invoicePanel, .invoiceDocument, .entrySection, .selectedSection, .transferLineList, .heldSaleList, .performanceList, .dashboardPanels > *, .dashboardHero, .barcodeShell, .barcodeGrid > *, .barcodeInput, .emptyState, .dashboardEmpty, .emptyCatalogue, .emptyTable, .noMenuResults, .reconcileSummary, .paymentSummary, .splitPayments, .validationSummary, .dataToolsPage > section, .archiveList, .archiveSafety, .archiveToolbar, .posCheckout > article, .posTopActions, .pfCard, .pfStatusCard) {
+  background:transparent !important;
+  border-color:var(--border) !important;
+}
+
+/* the specular top edge is baked into --glass itself (see tokens) rather than
+   painted with a pseudo-element, so it can never cover table headers or cells */
+.metricCard::after, .metricCard:after, .insightCard::after, .dataCard::after,
+.stats article:after, .card::after, .panel::after { display:none !important; content:none !important; }
+
+/* lift on hover for the cards that are actually interactive */
+.metricCard, .insightCard, .financeMetric, .promotionGrid > *, .branchGrid > *,
+.catalogueGrid > *, .dashboardPanels > * {
+  transition:transform .22s var(--ease), border-color .22s var(--ease), box-shadow .28s var(--ease);
+}
+.metricCard:hover, .insightCard:hover, .financeMetric:hover,
+.promotionGrid > *:hover, .branchGrid > *:hover, .catalogueGrid > *:hover {
+  transform:translateY(-3px);
+  border-color:var(--border-strong) !important;
+  box-shadow:var(--glass-hi), var(--glass-lo), var(--shadow-lg) !important;
+}
+
+/* ---------------------------------------------------------------------
+   4. SIDEBAR — a floating glass rail
+   ------------------------------------------------------------------ */
+aside.sidebar, aside.sidebar.modernSidebar, .sidebar, .modernSidebar {
+  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.025) 42%, rgba(255,255,255,.05)) !important;
+  -webkit-backdrop-filter:var(--glass-blur-lg);
+  backdrop-filter:var(--glass-blur-lg);
+  border-right:1px solid var(--glass-brd) !important;
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.06), 8px 0 40px rgba(0,0,0,.28) !important;
+  color:var(--subtle) !important;
+}
+:root[data-theme="light"] aside.sidebar, :root[data-theme="light"] .modernSidebar {
+  background:linear-gradient(180deg, rgba(255,255,255,.90), rgba(255,255,255,.66)) !important;
+  box-shadow:inset -1px 0 0 rgba(255,255,255,.9), 8px 0 40px rgba(16,22,38,.08) !important;
+}
+
+.sidebarHeader, .sidebarFooter { border-color:var(--border) !important; background:transparent !important; }
+.sidebarLogo strong, .sidebarLogoFull strong { color:var(--text) !important; }
+
+.menuSearch, .menuSearch input {
+  background:var(--surface-2) !important;
+  border-color:var(--border) !important;
+  color:var(--text) !important;
+  border-radius:var(--radius-pill) !important;
+}
+.menuSearch { box-shadow:var(--glass-lo), inset 0 1px 0 rgba(255,255,255,.06); }
+
+.navGroupLabel {
+  color:var(--faint) !important;
+  font-size:9px !important; font-weight:800 !important;
+  letter-spacing:.14em !important; text-transform:uppercase;
+}
+
+.menuLink, .sidebarNav button, .sidebarNav a, .subMenu a, .subMenu button {
+  border-radius:var(--radius-sm) !important;
+  color:var(--subtle) !important;
+  background:transparent !important;
+  border:1px solid transparent !important;
+  transition:background .18s var(--ease), color .18s var(--ease), border-color .18s var(--ease);
+}
+.menuLink:hover, .sidebarNav button:hover, .sidebarNav a:hover, .subMenu a:hover, .subMenu button:hover {
+  background:var(--surface) !important;
+  color:var(--text) !important;
+  border-color:var(--glass-brd-2) !important;
+}
+.menuLink.active, .sidebarNav .active, .subMenu .active, .navGroupItems .active {
+  background:linear-gradient(135deg, rgba(255,77,88,.20), rgba(255,77,88,.07)) !important;
+  border-color:rgba(255,77,88,.34) !important;
+  color:#fff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), 0 6px 18px rgba(255,60,72,.18) !important;
+}
+:root[data-theme="light"] .menuLink.active, :root[data-theme="light"] .sidebarNav .active {
+  color:var(--brand-dark) !important;
+}
+.menuIcon {
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:10px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12) !important;
+  color:inherit !important;
+}
+.menuLink.active .menuIcon { background:rgba(255,255,255,.14) !important; border-color:rgba(255,255,255,.22) !important; }
+
+.signOut, .signOutWide {
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-sm) !important;
+  color:var(--subtle) !important;
+}
+.signOut:hover, .signOutWide:hover { background:var(--danger-soft) !important; color:var(--danger) !important; border-color:var(--danger) !important; }
+.sidebarDeveloper { opacity:.6; }
+
+/* ---------------------------------------------------------------------
+   5. TOPBAR / STATUS BAR
+   ------------------------------------------------------------------ */
+.topbar, .app > header, header.topbar, .globalStatusBar, .pfTopbar {
+  background:linear-gradient(180deg, rgba(255,255,255,.085), rgba(255,255,255,.03)) !important;
+  -webkit-backdrop-filter:var(--glass-blur-lg);
+  backdrop-filter:var(--glass-blur-lg);
+  border:1px solid var(--glass-brd) !important;
+  border-radius:var(--radius-lg) !important;
+  box-shadow:var(--glass-hi), var(--shadow) !important;
+  color:var(--text) !important;
+}
+.globalStatusBar { border-radius:var(--radius-pill) !important; }
+:root[data-theme="light"] .topbar, :root[data-theme="light"] .globalStatusBar {
+  background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.66)) !important;
+}
+.topbar b, .globalStatusBar b { color:var(--text) !important; }
+.crumb, .topbar .crumb, .topbar p {
+  color:var(--faint) !important;
+  letter-spacing:.1em; text-transform:uppercase; font-size:9.5px; font-weight:800;
+}
+.statusBarClock { font-family:'Spline Sans Mono', ui-monospace, monospace; letter-spacing:.04em; }
+.statusBarAvatar, .roleAvatar, .productAvatar, .archiveAvatar, .posProductAvatar, .pageIcon, .notificationIcon, .pfStatIcon, .pfStatusIcon {
+  background:linear-gradient(160deg, rgba(255,255,255,.20), rgba(255,255,255,.05)) !important;
+  border:1px solid var(--glass-brd) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22), var(--shadow-xs) !important;
+  color:var(--text) !important;
+  border-radius:12px !important;
+}
+.statusBarAvatar { border-radius:var(--radius-pill) !important; background:linear-gradient(150deg, var(--brand), var(--brand-dark)) !important; color:#fff !important; }
+
+/* ---------------------------------------------------------------------
+   6. PAGE FRAME
+   ------------------------------------------------------------------ */
+.page, .dashboard { padding:22px 28px 40px !important; }
+.pageHeading h1, .dashboardHero h1 { font-size:27px !important; line-height:1.2; }
+.pageHeading p, .dashboardHero p, .dashboardMeta { color:var(--subtle) !important; }
+.eyebrow, .sectionTitle > small, .formSectionIntro small {
+  color:var(--faint) !important;
+  letter-spacing:.14em !important; text-transform:uppercase; font-weight:800;
+}
+.muted, .fieldHint, .dialogHelp, small.muted { color:var(--subtle) !important; }
+
+/* ---------------------------------------------------------------------
+   7. BUTTONS — glass pills; brand fill reserved for the primary action
+   ------------------------------------------------------------------ */
+button, .button, a.new, a.primaryAction {
+  font-family:inherit;
+  transition:transform .16s var(--ease), background .18s var(--ease),
+             border-color .18s var(--ease), box-shadow .22s var(--ease), color .18s var(--ease);
+}
+button:active, .button:active { transform:scale(.975); }
+
+/* secondary / neutral — the default look for anything not primary */
+.secondaryAction, .secondaryButton, .ghostButton, .quietButton, .iconButton, .posIconBtn,
+.tableAction, .viewInvoiceButton, .restoreLink, .catalogueShortcut, .inlineSelect,
+.rowActions button, .recordActions button, .productActions button, .lineActions button,
+.filterActions button:not(.new), .salesTopActions button:not(.new), .expiryTopActions button:not(.new),
+.barcodeTopActions button:not(.new), .archiveToolbar button:not(.new), .alertToolbar button:not(.new),
+.catalogueTools button:not(.new), .taxonomyTools button:not(.new), .productToolbar button:not(.new),
+.returnActions button:not(.primary), .receiptActions button,
+.quickCash button, .cartHoldActions button, .posSaleActions button, .dialogClose, .mobileClose,
+.addJournalLine, .previewDivider button, .relatedDrawer button, .removeProduct, .removeLine,
+.qtyStepper button, .customRange button, .periodPicker button, .reportPresets button,
+.transactionDialog footer button:not(.dangerButton), .invoicePanel > footer button:first-child,
+.workflowModal footer button:not(.primary), .documentModal footer button:not(.primary),
+.actionDialog footer button:not(.dangerButton):not(.primary) {
+  background:var(--surface) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  backdrop-filter:blur(14px) saturate(150%);
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-sm) !important;
+  color:var(--text) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10), var(--shadow-xs) !important;
+  font-weight:700;
+}
+.secondaryAction:hover, .secondaryButton:hover, .ghostButton:hover, .quietButton:hover,
+.iconButton:hover, .posIconBtn:hover, .tableAction:hover, .viewInvoiceButton:hover,
+.rowActions button:hover, .recordActions button:hover, .productActions button:hover,
+.filterActions button:not(.new):hover, .quickCash button:hover, .posSaleActions button:hover,
+.qtyStepper button:hover, .reportPresets button:hover, .periodPicker button:hover {
+  background:var(--surface-2) !important;
+  border-color:var(--border-strong) !important;
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), var(--shadow) !important;
+}
+
+/* primary — liquid brand fill with a travelling specular sweep */
+.new, .primary, .primaryAction, .savePurchase, .saveRole, .payButton, .pfBtnLogin,
+.stickySave button, .invoicePanel > footer button:nth-child(2),
+.workflowModal footer button.primary, .documentModal footer button.primary,
+.actionDialog footer button.primary, .financeForm button[type="submit"],
+.settingsForm button[type="submit"], .saasForm button[type="submit"],
+.productForm button[type="submit"], .workflowForm button[type="submit"] {
+  position:relative; overflow:hidden;
+  background:linear-gradient(140deg, var(--brand) 0%, var(--brand-dark) 100%) !important;
+  border:1px solid rgba(255,255,255,.20) !important;
+  border-radius:var(--radius-sm) !important;
+  color:#fff !important;
+  font-weight:800 !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.34), var(--shadow-brand) !important;
+}
+.new::after, .primary::after, .primaryAction::after, .savePurchase::after, .saveRole::after,
+.payButton::after, .pfBtnLogin::after {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(115deg, transparent 32%, rgba(255,255,255,.40) 50%, transparent 68%);
+  transform:translateX(-130%); transition:transform .7s var(--ease); pointer-events:none;
+}
+.new:hover::after, .primary:hover::after, .primaryAction:hover::after, .savePurchase:hover::after,
+.saveRole:hover::after, .payButton:hover::after, .pfBtnLogin:hover::after { transform:translateX(130%); }
+.new:hover, .primary:hover, .primaryAction:hover, .savePurchase:hover, .payButton:hover:not(:disabled) {
+  transform:translateY(-1px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.40), 0 16px 36px rgba(255,60,72,.36) !important;
+}
+
+/* destructive */
+.dangerButton, .dangerAction, .dangerLink, .removeLine, .removeProduct, .cancelHeld,
+.roleMatrixHead button, .archiveList button.dangerButton {
+  background:var(--danger-soft) !important;
+  border:1px solid rgba(255,122,102,.32) !important;
+  color:var(--danger) !important;
+  border-radius:var(--radius-sm) !important;
+  font-weight:750;
+}
+.dangerButton:hover, .dangerAction:hover, .removeLine:hover, .removeProduct:hover {
+  background:var(--danger) !important; color:#fff !important; border-color:transparent !important;
+  box-shadow:0 10px 24px rgba(208,64,44,.28) !important;
+}
+
+button:disabled, .payButton:disabled, .primary:disabled, .new:disabled {
+  background:var(--surface-2) !important;
+  color:var(--faint) !important;
+  border-color:var(--border) !important;
+  box-shadow:none !important;
+  opacity:.7; transform:none !important; cursor:not-allowed;
+}
+button:disabled::after { display:none !important; }
+
+/* ---------------------------------------------------------------------
+   8. INPUTS — recessed glass wells
+   ------------------------------------------------------------------ */
+input:not([type="checkbox"]):not([type="radio"]), select, textarea,
+.searchField, .searchField input, .catalogSearch input, .catalogueSearch input,
+.inventorySearch input, .scannerSearch input, .barcodeInput input, .directoryPage input,
+.reportFilterGrid input, .expiryFilters input, .salesFilters input, .accountingFilters input,
+.syncFilters input, .returnLines input, .reasonField textarea, .checkoutCart input,
+.checkoutCart select, .documentFields input, .documentFields select, .journalLine input,
+.journalLine select, .settingsFields input, .settingsFields select, .dialogFieldGrid input,
+.dialogFieldGrid select, .formField input, .formField select, .formField textarea {
+  background:var(--surface-2) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-sm) !important;
+  color:var(--text) !important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.16), inset 0 -1px 0 rgba(255,255,255,.05) !important;
+  transition:border-color .18s var(--ease), box-shadow .18s var(--ease), background .18s var(--ease);
+}
+:root[data-theme="light"] input:not([type="checkbox"]):not([type="radio"]),
+:root[data-theme="light"] select, :root[data-theme="light"] textarea {
+  box-shadow:inset 0 1px 2px rgba(16,22,38,.06) !important;
+}
+input::placeholder, textarea::placeholder { color:var(--faint) !important; }
+input:focus, select:focus, textarea:focus, .searchField:focus-within, .posSearchBar:focus-within {
+  outline:none !important;
+  background:var(--surface) !important;
+  border-color:var(--brand) !important;
+  box-shadow:0 0 0 3px var(--brand-ring) !important;
+}
+label, .formField > span, .checkField label, .fieldHint { color:var(--subtle) !important; }
+.formField > label, .inventoryFormGrid label, .financeFormGrid label, .reportFilterGrid label,
+.dialogFieldGrid label, .settingsFields label {
+  font-weight:750; letter-spacing:.01em;
+}
+input[type="checkbox"], input[type="radio"] { accent-color:var(--brand); width:15px; height:15px; }
+
+.searchField, .catalogSearch, .catalogueSearch, .inventorySearch, .menuSearch,
+.scannerSearch, .posSearchBar, .barcodeInput {
+  border-radius:var(--radius-sm) !important;
+}
+.searchWrap, .search {
+  background:var(--surface-2) !important;
+  border-color:var(--glass-brd-2) !important;
+  border-radius:var(--radius-sm) !important;
+}
+
+/* ---------------------------------------------------------------------
+   9. TABLES — the densest surface in the product, so it gets the most
+   care: a frosted sticky header band, hairline rows, no zebra noise.
+   ------------------------------------------------------------------ */
+table { border-collapse:separate !important; border-spacing:0 !important; width:100%; }
+
+table thead th, .productTable th, .salesTable th, .directoryTable th, .accountingTable th,
+.expiryTable th, .roleMatrix th, .syncList th, .archiveList th, .approvalQueue th,
+.workflowRecords th, .procurementRecords th, .inventoryRecords th, .statement th,
+.coaGrid th, .journalLines th, .notificationList th, .reportResult th {
+  position:sticky; top:0; z-index:2;
+  background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04)) !important;
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  backdrop-filter:blur(18px) saturate(160%);
+  border-bottom:1px solid var(--border-strong) !important;
+  color:var(--faint) !important;
+  font-size:9.5px !important;
+  font-weight:850 !important;
+  letter-spacing:.13em !important;
+  text-transform:uppercase;
+  padding:13px 16px !important;
+  text-align:left;
+}
+:root[data-theme="light"] table thead th {
+  background:linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.70)) !important;
+}
+
+table tbody td {
+  border-bottom:1px solid var(--border) !important;
+  padding:13px 16px !important;
+  color:var(--text);
+  vertical-align:middle;
+}
+table tbody tr { transition:background .16s var(--ease); }
+table tbody tr:hover { background:var(--surface-2) !important; }
+table tbody tr:last-child td { border-bottom:0 !important; }
+.clickableRow { cursor:pointer; }
+.clickableRow:hover { background:var(--brand-soft) !important; }
+
+.tableScroll, .expiryTable, .accountingTable, .roleMatrix, .directoryTable {
+  overflow:auto; border-radius:var(--radius-lg) !important;
+}
+td b, td strong { color:var(--text); font-weight:750; }
+td small { color:var(--subtle); }
+.rank, .productRank, .lineIndex, .countBadge {
+  background:var(--surface-2) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-pill) !important;
+  color:var(--subtle) !important;
+  font-weight:800;
+}
+
+/* ---------------------------------------------------------------------
+   10. STATUS CHIPS / BADGES — tinted glass, never flat blocks
+   ------------------------------------------------------------------ */
+.saleStatus, .paymentBadge, .draftBadge, .promoBadge, .stockBadge,
+.cartCountBadge, .countBadge,
+span.success, em.success, b.success, small.success, i.success,
+span.warning, em.warning, b.warning, small.warning, i.warning,
+span.error, em.error, b.error, small.error, i.error,
+span.expected, em.expected, b.expected, small.expected {
+  display:inline-flex !important;
+  align-items:center;
+  width:fit-content !important;
+  max-width:100%;
+  border-radius:var(--radius-pill) !important;
+  font-size:10px !important;
+  font-weight:800 !important;
+  letter-spacing:.02em;
+  padding:4px 11px !important;
+  border:1px solid transparent;
+  -webkit-backdrop-filter:blur(10px);
+  backdrop-filter:blur(10px);
+}
+span.success, em.success, b.success, small.success, .saleStatus, .paymentBadge.paid, .stockBadge {
+  background:var(--success-soft) !important; color:var(--success) !important; border-color:rgba(63,206,139,.26) !important;
+}
+span.warning, em.warning, b.warning, small.warning, .saleStatus.partial_returned, .stockBadge.low, .draftBadge {
+  background:var(--warning-soft) !important; color:var(--warning) !important; border-color:rgba(240,179,84,.26) !important;
+}
+span.error, em.error, b.error, small.error, .saleStatus.cancelled, .negativeQty, .impactNegative, .dangerText, .errorRows {
+  background:var(--danger-soft) !important; color:var(--danger) !important; border-color:rgba(255,122,102,.26) !important;
+}
+.saleStatus.returned, .promoBadge, .paymentBadge {
+  background:var(--brand-soft) !important; color:var(--brand) !important; border-color:rgba(255,77,88,.26) !important;
+}
+.cartCountBadge, .countBadge {
+  background:var(--surface-2) !important; color:var(--subtle) !important; border-color:var(--glass-brd-2) !important;
+}
+
+/* ---------------------------------------------------------------------
+   11. TABS / SEGMENTED PICKERS — one shared "glass rail + pill" control
+   ------------------------------------------------------------------ */
+.periodPicker, .accountingTabs, .financeTabs, .workflowTabs, .taxonomyTabs, .expiryViews,
+.tabRail, .cartDensity, .paymentMethods, .purchaseSteps, .returnSteps, .importSteps,
+.reportPresets, .customRange {
+  background:var(--surface-2) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-pill) !important;
+  padding:4px !important;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,.14) !important;
+  gap:3px !important;
+}
+.periodPicker > *, .accountingTabs > *, .financeTabs > *, .workflowTabs > *,
+.taxonomyTabs > *, .expiryViews > *, .tabRail > *, .cartDensity > *,
+.paymentMethods > *, .reportPresets > *, .customRange > * {
+  text-decoration:none;
+  background:transparent !important;
+  border:1px solid transparent !important;
+  border-radius:var(--radius-pill) !important;
+  color:var(--subtle) !important;
+  font-weight:750 !important;
+  box-shadow:none !important;
+  padding:7px 15px !important;
+}
+.periodPicker > *:hover, .accountingTabs > *:hover, .financeTabs > *:hover,
+.workflowTabs > *:hover, .tabRail > *:hover, .expiryViews > *:hover {
+  color:var(--text) !important; background:var(--surface) !important; transform:none !important;
+}
+.periodPicker > .active, .accountingTabs > .active, .financeTabs > .active,
+.workflowTabs > .active, .taxonomyTabs > .active, .expiryViews > .active,
+.tabRail > .active, .cartDensity > .active, .paymentMethods > .active,
+.reportPresets > .active, .customRange > .active, .reportCatalogue .active {
+  background:linear-gradient(150deg, var(--brand), var(--brand-dark)) !important;
+  border-color:rgba(255,255,255,.20) !important;
+  color:#fff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30), 0 6px 16px rgba(255,60,72,.26) !important;
+}
+
+/* the report catalogue is a vertical rail, not a pill row */
+.reportCatalogue { border-radius:var(--radius-lg) !important; padding:10px !important; }
+.reportCatalogue button { border-radius:var(--radius-sm) !important; }
+
+/* ---------------------------------------------------------------------
+   12. MODALS / DRAWERS — heavy glass over a blurred scrim
+   ------------------------------------------------------------------ */
+.actionDialogBackdrop, .historyBackdrop, .navBackdrop,
+.workflowModal, .documentModal, .receiveModal, .paymentModal, .expiryModal,
+.transactionDialog, .userEditorDialog, .actionDialog, .dangerDialog, .editGrnModal {
+  -webkit-backdrop-filter:blur(18px) saturate(120%);
+  backdrop-filter:blur(18px) saturate(120%);
+}
+.actionDialogBackdrop, .historyBackdrop, .navBackdrop { background:rgba(6,8,14,.55) !important; }
+
+.workflowModal > *, .documentModal > *, .receiveModal > *, .paymentModal > *, .expiryModal > *,
+.transactionDialog > *, .userEditorDialog > *, .actionDialog > *, .dangerDialog > *,
+.editGrnModal > *, .auditDrawer, .relatedDrawer, .priceHistoryPanel, .invoicePanel {
+  background:var(--glass) !important;
+  -webkit-backdrop-filter:var(--glass-blur-lg);
+  backdrop-filter:var(--glass-blur-lg);
+  border:1px solid var(--glass-brd) !important;
+  border-radius:var(--radius-xl) !important;
+  box-shadow:var(--glass-hi), var(--glass-lo), var(--shadow-lg) !important;
+  color:var(--text) !important;
+}
+.workflowModal header, .documentModal header, .transactionDialog header, .actionDialog header,
+.invoicePanel header, .auditDrawer header, .receiveHeader {
+  border-bottom:1px solid var(--border) !important;
+  background:transparent !important;
+}
+.workflowModal footer, .documentModal footer, .transactionDialog footer, .actionDialog footer,
+.invoicePanel > footer, .receiveFooter, .documentFooter {
+  border-top:1px solid var(--border) !important;
+  background:transparent !important;
+}
+
+/* ---------------------------------------------------------------------
+   13. NOTICES / MESSAGES
+   ------------------------------------------------------------------ */
+.notice, .posNotice, .financeNotice, .errorNotice, .errorMessage, .formError, .pfFormError,
+.successMessage, .settingsUpdated, .catalogMessage, .priceWarning, .fullAccessNotice,
+.inventoryCallout, .offlineReceiptWarning, .cancellationNote, .globalOfflineBanner,
+.pfCapsWarning, .validationSummary, .dialogHelp {
+  border-radius:var(--radius) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  background:var(--surface) !important;
+  -webkit-backdrop-filter:blur(16px) saturate(150%);
+  backdrop-filter:blur(16px) saturate(150%);
+  box-shadow:var(--glass-hi), var(--shadow-xs) !important;
+  color:var(--text) !important;
+}
+.errorNotice, .errorMessage, .formError, .pfFormError, .priceWarning {
+  background:var(--danger-soft) !important; border-color:rgba(255,122,102,.30) !important; color:var(--danger) !important;
+}
+.successMessage, .settingsUpdated, .fullAccessNotice {
+  background:var(--success-soft) !important; border-color:rgba(63,206,139,.30) !important; color:var(--success) !important;
+}
+.globalOfflineBanner, .offlineReceiptWarning, .pfCapsWarning, .cancellationNote {
+  background:var(--warning-soft) !important; border-color:rgba(240,179,84,.30) !important; color:var(--warning) !important;
+}
+.inventoryCallout, .financeGuide, .dialogHelp { color:var(--subtle) !important; }
+
+/* ---------------------------------------------------------------------
+   14. EMPTY STATES
+   ------------------------------------------------------------------ */
+.emptyState, .dashboardEmpty, .empty, .emptyCatalogue, .emptyTable, .compactEmpty,
+.returnEmpty, .noMenuResults, .sidebarLoading, .invoiceLoading {
+  display:grid !important;
+  justify-items:center; align-content:center; text-align:center;
+  gap:9px !important;
+  padding:46px 22px !important;
+  color:var(--subtle) !important;
+  border-radius:var(--radius-lg) !important;
+}
+.emptyIcon, .empty .emptyIcon, .registerGateIcon {
+  display:grid; place-items:center;
+  width:56px; height:56px;
+  border-radius:18px;
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.14), var(--shadow-xs);
+  color:var(--faint) !important;
+}
+.emptyIcon svg, .registerGateIcon svg { width:24px; height:24px; }
+.emptyState b, .empty b, .dashboardEmpty b { color:var(--text) !important; font-size:13.5px; }
+.emptyState span, .empty small, .dashboardEmpty small { color:var(--subtle) !important; font-size:11.5px; }
+
+/* ---------------------------------------------------------------------
+   15. DASHBOARD
+   Type was running at 9px in the metric cards, which is a large part of
+   why the workspace was tiring. Everything here is sized for reading.
+   ------------------------------------------------------------------ */
+.dashboard { max-width:1560px; margin-inline:auto; }
+.dashboardHero { border:0 !important; background:transparent !important; box-shadow:none !important; backdrop-filter:none !important; padding:0 !important; }
+.dashboardHero::after { display:none !important; }
+.dashboardMetrics { gap:14px !important; }
+
+.metricCard { min-height:98px !important; padding:17px 18px !important; overflow:hidden; }
+.metricCard small {
+  color:var(--subtle) !important;
+  font-size:10.5px !important;
+  font-weight:750 !important;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  margin-bottom:6px !important;
+}
+.metricCard b {
+  font-size:20px !important;
+  font-weight:800 !important;
+  letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums;
+  color:var(--text) !important;
+}
+
+/* --- KPI figures must never be clipped mid-digit ---------------------
+   A truncated amount is not a smaller amount, it is a WRONG amount:
+   "LKR 18,800.00" cut to "LKR 18,800.0" reads as a real, different figure.
+   Three layers stop that:
+     1. the text column may shrink (min-width:0) instead of overflowing the card,
+     2. long figures step down a size (classes set by metricValueClass in lib/format),
+     3. anything still too wide ends in an ellipsis, which at least reads as
+        "there is more here" rather than as a plausible wrong number.
+   The real fix for huge values is upstream, in moneyCompact. */
+.metricCard > div, .financeMetric > div, .salesSummary article, .profileMetrics span, .catalogStats span { min-width:0; }
+b.metricValue {
+  display:block;
+  max-width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+/* the step-down is per card family, because each family starts from a different
+   base size — one shared px value would enlarge the smaller cards, not shrink them */
+.metricCard b.metricValue.small { font-size:17px !important; }
+.metricCard b.metricValue.tiny { font-size:15px !important; letter-spacing:-.03em; }
+.financeMetric b.metricValue.small, .salesSummary b.metricValue.small { font-size:14px !important; }
+.financeMetric b.metricValue.tiny, .salesSummary b.metricValue.tiny { font-size:13px !important; letter-spacing:-.03em; }
+.profileMetrics b.metricValue.small, .catalogStats b.metricValue.small { font-size:13px !important; }
+.profileMetrics b.metricValue.tiny, .catalogStats b.metricValue.tiny { font-size:12px !important; }
+.metricIcon {
+  width:40px !important; height:40px !important;
+  border-radius:13px !important;
+  background:linear-gradient(160deg, rgba(255,255,255,.22), rgba(255,255,255,.05)) !important;
+  border:1px solid var(--glass-brd) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.26) !important;
+}
+.metricIcon svg { width:19px; height:19px; }
+
+.insightCard > header {
+  border-bottom:1px solid var(--border) !important;
+  background:transparent !important;
+  padding:16px 18px !important;
+}
+.insightCard > header h2, .insightCard h2 { font-size:15px !important; }
+.dashboardPanels { gap:14px !important; }
+.performanceList li, .performanceList > div { border-color:var(--border) !important; }
+
+/* ---------------------------------------------------------------------
+   16. POS TERMINAL
+   The register runs all day, so it is tuned for the least glare: darker
+   glass, larger hit targets, calmer accents.
+   ------------------------------------------------------------------ */
+.posTerminal { background:transparent !important; }
+.posHeader {
+  background:linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.025)) !important;
+  -webkit-backdrop-filter:var(--glass-blur-lg);
+  backdrop-filter:var(--glass-blur-lg);
+  border-bottom:1px solid var(--glass-brd) !important;
+  box-shadow:var(--glass-hi) !important;
+}
+
+.posCheckout > article { border-radius:var(--radius-xl) !important; }
+.posSearchBar {
+  background:var(--surface-2) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius) !important;
+  box-shadow:inset 0 1px 3px rgba(0,0,0,.22) !important;
+  color:var(--text) !important;
+}
+.posSearchBar input { background:transparent !important; color:var(--text) !important; font-size:13px !important; }
+.posSearchBar span:first-child { color:var(--brand) !important; }
+.posSearchKbd {
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  color:var(--faint) !important;
+  border-radius:var(--radius-xs) !important;
+}
+
+.posProductCard {
+  background:var(--glass-2) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08) !important;
+  color:var(--text) !important;
+  transition:transform .16s var(--ease), border-color .16s var(--ease), box-shadow .2s var(--ease), background .16s var(--ease);
+}
+.posProductCard:hover:not(:disabled) {
+  transform:translateY(-3px) !important;
+  background:var(--surface) !important;
+  border-color:var(--border-strong) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.16), var(--shadow) !important;
+}
+.posProductInfo b { color:var(--text) !important; font-size:13px !important; }
+.posProductSku { color:var(--faint) !important; }
+.posProductPrice strong { color:var(--text) !important; font-size:14px !important; font-variant-numeric:tabular-nums; }
+.posProductPrice { border-top:1px solid var(--border) !important; }
+.posProductAdd {
+  background:linear-gradient(150deg, var(--brand), var(--brand-dark)) !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  color:#fff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3), 0 4px 12px rgba(255,60,72,.28) !important;
+}
+.posProductAvatar {
+  background:linear-gradient(160deg, rgba(255,255,255,.18), rgba(255,255,255,.04)) !important;
+  border:1px solid var(--glass-brd) !important;
+  color:var(--text) !important;
+}
+
+.checkoutCart h2, .checkoutCart label, .checkoutCart .totalRow { color:var(--text) !important; }
+.cartLines { border-color:var(--border) !important; }
+.cartLine { border-color:var(--border) !important; }
+.cartLineInfo b, .cartLineTotal { color:var(--text) !important; }
+.cartLineInfo small { color:var(--subtle) !important; }
+.qtyStepper {
+  background:var(--surface-2) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-pill) !important;
+  padding:3px !important;
+}
+.qtyStepper button { border-radius:var(--radius-pill) !important; width:26px; height:26px; }
+
+.posFooter { background:transparent !important; border-top:1px dashed var(--border-strong) !important; }
+.totalRow b { font-size:24px !important; color:var(--text) !important; font-variant-numeric:tabular-nums; letter-spacing:-.03em; }
+.changeDisplay {
+  background:var(--success-soft) !important;
+  border:1px solid rgba(63,206,139,.28) !important;
+  border-radius:var(--radius-sm) !important;
+  color:var(--success) !important;
+}
+.payButton { min-height:52px !important; border-radius:var(--radius) !important; font-size:14px !important; }
+.posTopActions {
+  background:var(--glass) !important;
+  border:1px solid var(--glass-brd) !important;
+  border-radius:var(--radius) !important;
+  box-shadow:var(--glass-hi), var(--shadow) !important;
+}
+.posOnlineStatus { color:var(--subtle) !important; }
+.posOnlineDot { background:var(--success) !important; }
+.posOnlineDot.offline { background:var(--danger) !important; }
+.posCashierBadge, .registerStatus {
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-pill) !important;
+  color:var(--text) !important;
+}
+.posLogo { background:var(--surface) !important; border:1px solid var(--glass-brd-2); }
+
+/* ---------------------------------------------------------------------
+   17. LOGIN — already cinematic; re-tuned to the shared ambient so it is
+   the same product as the rest of the app rather than its own island.
+   ------------------------------------------------------------------ */
+.pfShell, .loginPage { background:transparent !important; }
+.loginPage > aside, .pfLeft {
+  background:linear-gradient(165deg, rgba(255,255,255,.07), rgba(255,255,255,.02)) !important;
+  -webkit-backdrop-filter:var(--glass-blur-lg);
+  backdrop-filter:var(--glass-blur-lg);
+  border-right:1px solid var(--glass-brd) !important;
+}
+.pfCard {
+  border-radius:var(--radius-xl) !important;
+  padding:30px !important;
+}
+.pfHeadline { letter-spacing:-.03em; }
+.pfLead, .pfKicker, .pfFooter, .pfMicroBrand { color:var(--subtle) !important; }
+.pfFieldIcon, .pfEyeToggle {
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-xs) !important;
+  color:var(--subtle) !important;
+}
+.pfBtnLogin { min-height:48px; border-radius:var(--radius) !important; }
+.pfStats > *, .pfStatusStack > * , .pfSecurityRow {
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius) !important;
+  -webkit-backdrop-filter:blur(16px) saturate(150%);
+  backdrop-filter:blur(16px) saturate(150%);
+}
+.pfDivider { border-color:var(--border) !important; }
+
+/* ---------------------------------------------------------------------
+   18. PRINTED DOCUMENTS — receipts and invoices stay paper, not glass
+   ------------------------------------------------------------------ */
+.receiptPaper, .printDocument, .printLabels, .receiptPreview {
+  background:var(--solid) !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+@media print {
+  html body::before, html body::after { display:none !important; }
+  .receiptPaper, .printDocument, .printLabels, .invoiceDocument {
+    background:#fff !important; color:#000 !important;
+    box-shadow:none !important; border:0 !important;
+    -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+  }
+  .noPrint, aside.sidebar, .topbar, .mobileMenuToggle { display:none !important; }
+}
+
+/* ---------------------------------------------------------------------
+   19. MOBILE
+   ------------------------------------------------------------------ */
+.mobileMenuToggle, .menuToggle, .floatingGlassButton {
+  background:var(--glass) !important;
+  -webkit-backdrop-filter:var(--glass-blur);
+  backdrop-filter:var(--glass-blur);
+  border:1px solid var(--glass-brd) !important;
+  border-radius:var(--radius-sm) !important;
+  box-shadow:var(--glass-hi), var(--shadow) !important;
+  color:var(--text) !important;
+}
+@media (max-width:900px) {
+  .page, .dashboard { padding:16px 14px 34px !important; }
+  .topbar, .globalStatusBar { border-radius:var(--radius) !important; }
+  .pageHeading h1, .dashboardHero h1 { font-size:22px !important; }
+  .metricCard b { font-size:18px !important; }
+  aside.sidebar, .modernSidebar { border-radius:0 !important; }
+}
+@media (max-width:560px) {
+  .dashboardMetrics { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .metricCard { min-height:86px !important; padding:14px !important; }
+}
+
+/* ---------------------------------------------------------------------
+   20. PERFORMANCE GUARD
+   Browsers without backdrop-filter get an opaque fallback so nothing
+   ever renders as unreadable transparent-on-transparent.
+   ------------------------------------------------------------------ */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))) {
+  .metricCard, .insightCard, .dataCard, .card, .panel, .productTableCard,
+  .formSection, .saasForm, .posCheckout > article, .topbar, .globalStatusBar,
+  aside.sidebar, .modernSidebar, .pfCard {
+    background:var(--solid) !important;
+  }
+  table thead th { background:var(--solid-2) !important; }
+}
+
+/* =====================================================================
+   21. RESPONSIVE SYSTEM
+   ---------------------------------------------------------------------
+   One breakpoint ladder for the whole product, replacing the ad-hoc mix
+   of 550/560/600/620/650/700/760/800/850/900/960/1000/1050/1080/1150/
+   1180/1200px cut-offs that had accumulated per page.
+
+        <=479   phone
+        <=767   large phone
+        <=1023  tablet
+        <=1279  small laptop
+        >=1280  desktop
+
+   Spacing is fluid between those stops rather than stepping, so there is
+   no width at which the page looks cramped or suddenly gutterless.
+   ===================================================================== */
+
+:root:root:root {
+  --gutter:clamp(14px, 2.4vw, 30px);
+  --gutter-y:clamp(16px, 2vw, 26px);
+  --gap:clamp(10px, 1.1vw, 15px);
+  --stack:clamp(12px, 1.4vw, 18px);
+  --statusbar-reserve:0px;
+}
+
+/* --- never let anything push the document sideways ------------------- */
+html, body { max-width:100%; overflow-x:clip; }
+img, svg, video, canvas, iframe { max-width:100%; height:auto; }
+pre, code, td, th { overflow-wrap:anywhere; }
+
+/* grid and flex children default to min-width:auto, which is the single
+   most common cause of horizontal overflow in this codebase */
+.page > *, .dashboard > *, .app > *,
+.dashboardMetrics > *, .dashboardPanels > *, .financeMetrics > *,
+.salesSummary > *, .expirySummary > *, .catalogStats > *, .syncMetrics > *,
+.profileMetrics > *, .cashierMetrics > *, .adminSummary > *,
+.reportWorkspace > *, .settingsWorkspace > *, .operationsLayout > *,
+.rolesPage > *, .posCheckout > *, .formSection > *, .saasForm > *,
+.inventoryFormGrid > *, .financeFormGrid > *, .reportFilterGrid > *,
+.dialogFieldGrid > *, .documentFields > *, .journalLine > *, .policyGrid > * {
+  min-width:0;
+}
+
+/* --- page frame ------------------------------------------------------ */
+.page, .dashboard, .formPage, .productFormPage, .directoryPage, .reportsPage,
+.settingsPage, .financePage, .accountingPage, .procurementPage, .inventoryPage,
+.expiryPage, .taxonomyPage, .rolesPage, .barcodePage, .adminCentrePage,
+.approvalsPage, .backupsPage, .syncPage, .dataToolsPage, .branchesPage,
+.promotionsPage, .workflowPage, .productPage {
+  padding-left:var(--gutter) !important;
+  padding-right:var(--gutter) !important;
+  width:100%;
+  max-width:100%;
+}
+.page, .dashboard {
+  padding-top:calc(var(--gutter-y) + var(--statusbar-reserve)) !important;
+  padding-bottom:calc(var(--gutter-y) * 1.6) !important;
+}
+
+/* --- toolbars and header rows always wrap before they overflow ------- */
+.topbar, .pageHeading, .topbarActions, .salesTopActions, .expiryTopActions,
+.barcodeTopActions, .catalogueTools, .taxonomyTools, .productToolbar,
+.archiveToolbar, .alertToolbar, .filterActions, .recordActions, .rowActions,
+.productActions, .returnActions, .receiptActions, .posHeaderRight, .posHeader,
+.sectionIntro, .cartTitle, .roleMatrixHead, .formSectionIntro, .documentIdentity,
+.matrixLegend, .expiryViews, .workflowTabs, .accountingTabs, .financeTabs,
+.taxonomyTabs, .periodPicker, .reportPresets, .purchaseSteps, .returnSteps,
+.importSteps, .lineActions, .splitPayments, .receiveHeader, .invoiceMeta {
+  flex-wrap:wrap;
+  gap:var(--gap);
+  min-width:0;
+}
+
+/* --- metric grids reflow by available width, not by a fixed count ---- */
+.dashboardMetrics, .financeMetrics, .salesSummary, .expirySummary,
+.catalogStats, .syncMetrics, .profileMetrics, .cashierMetrics,
+.adminSummary, .stats, .reconcileSummary, .purchaseSnapshot, .returnImpact {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)) !important;
+  gap:var(--gap) !important;
+}
+.dashboardPanels, .promotionGrid, .branchGrid, .catalogueGrid {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(min(100%, 320px), 1fr)) !important;
+  gap:var(--stack) !important;
+}
+.barcodeGrid { grid-template-columns:repeat(auto-fill, minmax(min(100%, 170px), 1fr)) !important; gap:var(--gap) !important; }
+.productGrid { grid-template-columns:repeat(auto-fill, minmax(min(100%, 196px), 1fr)) !important; gap:var(--gap) !important; }
+
+/* --- form grids ------------------------------------------------------ */
+.inventoryFormGrid, .financeFormGrid, .dialogFieldGrid, .documentFields,
+.settingsFields, .journalHeaderFields, .productFields, .lineCoreFields,
+.formField + .formField, .checkField, .mappingGrid {
+  min-width:0;
+}
+.inventoryFormGrid, .financeFormGrid, .dialogFieldGrid, .documentFields,
+.settingsFields, .journalHeaderFields, .productFields, .mappingGrid {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(min(100%, 230px), 1fr)) !important;
+  gap:var(--gap) !important;
+}
+.reportFilterGrid {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(min(100%, 170px), 1fr)) !important;
+  gap:var(--gap) !important;
+  align-items:end;
+}
+
+/* --- tables always scroll inside their own card, never the page ------ */
+.tableScroll, .productTableWrap, .productTableCard, .directoryTable,
+.salesTable, .accountingTable, .expiryTable, .roleMatrix, .syncList,
+.archiveList, .approvalQueue, .workflowRecords, .procurementRecords,
+.inventoryRecords, .statement, .notificationList, .reportResult, .coaGrid {
+  max-width:100%;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+table { min-width:max-content; }
+.reportResult table, .salesTable table, .directoryTable table { min-width:680px; }
+
+/* =====================================================================
+   Small laptop — the two-column workspaces lose their fixed rails first
+   ===================================================================== */
+@media (max-width:1279px) {
+  .settingsWorkspace { grid-template-columns:minmax(0,1fr) !important; }
+  .posCheckout { grid-template-columns:minmax(0,1.25fr) minmax(300px,.85fr) !important; }
+  .journalLineLabels, .journalLine { grid-template-columns:1.2fr 1fr 110px 110px 32px !important; }
+}
+
+/* =====================================================================
+   Tablet
+   ===================================================================== */
+@media (max-width:1023px) {
+  .reportWorkspace, .operationsLayout, .rolesPage, .returnReviewGrid,
+  .financeWorkspace, .salesWorkspace, .settingsWorkspace, .accountingPage,
+  .returnWorkspace, .procurementApp, .inventoryApp, .financeApp, .reportsApp {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  /* vertical rails become horizontal scrollers */
+  .reportCatalogue, .tabRail {
+    position:static !important;
+    display:flex !important;
+    gap:6px;
+    overflow-x:auto;
+    padding:8px !important;
+  }
+  .reportCatalogue > div { display:flex !important; gap:6px; margin:0 !important; }
+  .reportCatalogue small { display:none !important; }
+  .reportCatalogue button, .tabRail button { white-space:nowrap; flex:0 0 auto; }
+  .formSection { grid-template-columns:minmax(0,1fr) !important; }
+  .pageHeading h1, .dashboardHero h1 { font-size:clamp(20px, 3.2vw, 25px) !important; }
+}
+
+/* =====================================================================
+   Phone / large phone — sidebar is a drawer, so the fixed chrome needs
+   real clearance reserved at the top of every page.
+   ===================================================================== */
+@media (max-width:900px) {
+  :root:root:root { --statusbar-reserve:52px; }
+
+  main.shell, main, .shell { grid-template-columns:minmax(0,1fr) !important; display:block !important; }
+
+  aside.sidebar, aside.sidebar.modernSidebar, .modernSidebar {
+    position:fixed !important;
+    inset:0 auto 0 0;
+    width:min(84vw, 300px) !important;
+    height:100dvh;
+    z-index:90;
+    border-radius:0 !important;
+    transform:translateX(-102%);
+    transition:transform .3s var(--ease);
+    overflow-y:auto;
+  }
+  aside.sidebar.mobileOpen, aside.sidebar.modernSidebar.mobileOpen,
+  .modernSidebar.mobileOpen { transform:translateX(0); }
+
+  .mobileMenuToggle, .floatingGlassButton.mobileMenuToggle, .menuToggle {
+    display:grid !important;
+    place-items:center;
+    position:fixed !important;
+    top:12px; left:12px;
+    width:42px; height:42px;
+    z-index:95;
+  }
+  .navBackdrop { position:fixed; inset:0; z-index:88; }
+
+  .globalStatusBar {
+    top:12px !important; right:12px !important;
+    height:42px !important;
+    max-width:calc(100vw - 74px);
+    overflow:hidden;
+  }
+
+  .topbar, .app > header {
+    position:static !important;
+    flex-direction:column;
+    align-items:flex-start !important;
+    gap:10px;
+    padding:14px 16px !important;
+    height:auto !important;
+  }
+  .topbarActions, .filterActions { width:100%; }
+  .topbarActions > *, .filterActions > * { flex:1 1 auto; }
+
+  .page, .dashboard { padding-top:calc(var(--gutter-y) + 52px) !important; }
+  .dashboardMetrics { grid-template-columns:repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important; }
+  .pos, .posCheckout { grid-template-columns:minmax(0,1fr) !important; }
+  .journalLineLabels { display:none !important; }
+  .journalLine { grid-template-columns:minmax(0,1fr) !important; gap:8px !important; }
+  .cart, .catalog { width:auto; }
+}
+
+@media (max-width:767px) {
+  .dashboardMetrics, .financeMetrics, .salesSummary, .expirySummary,
+  .catalogStats, .syncMetrics, .profileMetrics, .cashierMetrics, .adminSummary, .stats {
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+  }
+  .dashboardPanels, .promotionGrid, .branchGrid, .catalogueGrid {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  .inventoryFormGrid, .financeFormGrid, .dialogFieldGrid, .documentFields,
+  .settingsFields, .productFields, .reportFilterGrid, .mappingGrid {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+  .productGrid { grid-template-columns:repeat(auto-fill, minmax(min(100%, 150px), 1fr)) !important; }
+  .barcodeGrid { grid-template-columns:repeat(auto-fill, minmax(min(100%, 140px), 1fr)) !important; }
+
+  /* dialogs go full-bleed sheets */
+  .workflowModal > *, .documentModal > *, .receiveModal > *, .paymentModal > *,
+  .expiryModal > *, .transactionDialog > *, .userEditorDialog > *, .actionDialog > *,
+  .dangerDialog > *, .editGrnModal > * {
+    width:100% !important;
+    max-width:100% !important;
+    max-height:92dvh;
+    border-radius:var(--radius-lg) var(--radius-lg) 0 0 !important;
+    overflow-y:auto;
+  }
+  .auditDrawer, .relatedDrawer, .priceHistoryPanel, .invoicePanel {
+    width:100% !important; max-width:100% !important;
+  }
+
+  /* action clusters become full-width stacks so nothing is half-tappable */
+  .rowActions, .recordActions, .productActions, .returnActions,
+  .receiptActions, .lineActions, .purchaseSubmitActions, .posSaleActions {
+    width:100%;
+  }
+  .rowActions > *, .recordActions > *, .purchaseSubmitActions > * { flex:1 1 120px; }
+
+  button, .button, .new, .primary, .secondaryAction, .tableAction {
+    min-height:38px;
+  }
+}
+
+@media (max-width:479px) {
+  :root:root:root { --gutter:13px; }
+  .dashboardMetrics, .financeMetrics, .catalogStats, .syncMetrics,
+  .profileMetrics, .cashierMetrics, .adminSummary, .stats {
+    grid-template-columns:repeat(2, minmax(0,1fr)) !important;
+  }
+  .salesSummary, .expirySummary { grid-template-columns:minmax(0,1fr) !important; }
+  .metricCard { flex-direction:column !important; align-items:flex-start !important; gap:8px; }
+  .pageHeading h1, .dashboardHero h1 { font-size:20px !important; }
+  .metricCard { min-height:78px !important; padding:13px 14px !important; }
+  .metricCard b { font-size:17px !important; }
+  .totalRow b { font-size:20px !important; }
+  .globalStatusBar { height:38px !important; padding:0 6px 0 10px !important; }
+  .globalStatusBar .statusBarClock small, .globalStatusBar .statusBarUser small { display:none !important; }
+  table thead th, table tbody td { padding:10px 12px !important; }
+  .periodPicker, .accountingTabs, .financeTabs, .workflowTabs, .taxonomyTabs,
+  .expiryViews, .reportPresets, .customRange {
+    width:100%; overflow-x:auto; flex-wrap:nowrap !important;
+  }
+  .periodPicker button, .accountingTabs button, .financeTabs button,
+  .workflowTabs button, .expiryViews button, .reportPresets button { flex:0 0 auto; white-space:nowrap; }
+}
+
+/* =====================================================================
+   POS terminal responsiveness — the register is used on 10" tablets and
+   on desktop, and its header sits under the fixed status chip.
+   ===================================================================== */
+@media (max-width:1023px) {
+  .posCheckout { grid-template-columns:minmax(0,1fr) !important; overflow:visible !important; }
+  .posCheckout > article { min-height:420px; }
+  .posTerminal { height:auto !important; min-height:100dvh; overflow:auto !important; }
+  .posTopActions {
+    position:static !important;
+    grid-template-columns:repeat(auto-fit, minmax(140px,1fr)) !important;
+    height:auto !important;
+    margin:0 0 10px !important;
+  }
+  .productGrid { padding-bottom:6px !important; }
+}
+@media (max-width:900px) {
+  .posTerminal > .posSaleActions { padding:6px var(--gutter) !important; }
+}
+@media (max-width:560px) {
+  .posHeaderRight { width:100%; justify-content:flex-start; }
+  .posCashierBadge, .posOnlineStatus { display:none !important; }
+  .posBrandBlock small { display:none; }
+}
+
+/* =====================================================================
+   Login — a single centred glass card on anything narrower than a laptop
+   ===================================================================== */
+@media (max-width:1023px) {
+  .pfShell, .loginPage { grid-template-columns:minmax(0,1fr) !important; display:block !important; }
+  .pfLeft, .loginPage > aside { display:none !important; }
+  .pfRight { min-height:100dvh; display:grid; place-items:center; padding:var(--gutter); }
+  .pfCard { width:100%; max-width:440px; }
+}
+@media (max-width:479px) {
+  .pfCard { padding:22px 18px !important; border-radius:var(--radius-lg) !important; }
+  .pfHeadline { font-size:24px !important; }
+}
+
+/* =====================================================================
+   Very wide screens — stop the content from stretching into a wall
+   ===================================================================== */
+@media (min-width:1720px) {
+  .page, .dashboard { max-width:1680px; margin-inline:auto; }
+}
+
+/* =====================================================================
+   Touch and coarse pointers — bigger targets, no hover-only affordances
+   ===================================================================== */
+@media (pointer:coarse) {
+  button, .button, .menuLink, .tableAction, .secondaryAction, select,
+  input:not([type="checkbox"]):not([type="radio"]) { min-height:42px; }
+  .qtyStepper button { width:34px; height:34px; }
+  .metricCard:hover, .insightCard:hover, .posProductCard:hover { transform:none !important; }
+}
+
+/* short viewports (landscape phones, split screens) */
+@media (max-height:620px) and (max-width:1023px) {
+  .page, .dashboard { padding-top:calc(var(--gutter-y) + 44px) !important; }
+  .pfCard { padding:18px !important; }
+}
+
+/* =====================================================================
+   22. POS HEADER + SCAN ROW
+   The header used to carry a duplicate nav and a clock, and its right-hand
+   cluster ran underneath the fixed status chip at narrow widths. The nav
+   and the clock are gone from the markup; what remains is laid out on a
+   single row that reserves real space for the fixed chrome.
+   ===================================================================== */
+.posTerminal > .posHeader {
+  display:flex !important;
+  align-items:center;
+  gap:clamp(10px, 1.6vw, 20px);
+  flex-wrap:nowrap !important;
+  /* the old rule pinned this to flex:0 0 64px, so once the header wrapped its
+     second row spilled out of the box and landed on the sale-actions bar */
+  flex:0 0 auto !important;
+  height:auto !important;
+  min-height:64px;
+  padding:10px clamp(14px, 2vw, 24px) !important;
+}
+.posBrandBlock { flex:0 0 auto; display:flex; align-items:center; gap:10px; min-width:0; }
+.posBrandBlock b { font-size:15px; white-space:nowrap; }
+.posOnlineStatus { flex:0 0 auto; margin-left:auto; }
+.posHeaderRight {
+  flex:0 0 auto;
+  display:flex !important;
+  align-items:center;
+  gap:10px;
+  flex-wrap:nowrap !important;
+  width:auto !important;
+  min-width:0;
+}
+.registerStatus {
+  display:grid !important;
+  gap:1px;
+  padding:6px 12px !important;
+  border-radius:var(--radius-sm) !important;
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  color:var(--text) !important;
+  text-align:left;
+  white-space:nowrap;
+}
+.registerStatus span { color:var(--faint); font-size:9px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; }
+.registerStatus b { font-size:12px; font-variant-numeric:tabular-nums; }
+.posCashierBadge { padding:5px 12px !important; white-space:nowrap; }
+.posCashierBadge b { font-size:11.5px; display:block; }
+.posCashierBadge small { font-size:9.5px; color:var(--subtle) !important; display:block; }
+.posIconBtn { width:36px; height:36px; display:grid; place-items:center; flex:0 0 36px; }
+
+/* Reserve the fixed status chip's real footprint. Measured, not guessed:
+   the chip is 312px wide at >=480px and 281px below that, pinned 12-14px
+   from the right edge. Flex children also get min-width:0 so they truncate
+   instead of spilling past the reserved padding. */
+:root:root:root { --poschip:340px; }
+
+.posTerminal > .posHeader > * { min-width:0; }
+.posBrandBlock b { overflow:hidden; text-overflow:ellipsis; }
+
+@media (min-width:901px) {
+  .posTerminal > .posHeader { padding-right:var(--poschip) !important; }
+}
+@media (max-width:1279px) {
+  .posOnlineStatus { display:none !important; }
+}
+@media (max-width:1100px) {
+  .posCashierBadge { display:none !important; }
+}
+
+/* Below the drawer breakpoint the header wraps: row one is the hamburger,
+   the wordmark and the chip; the register controls get their own full row. */
+@media (max-width:900px) {
+  /* The sale-actions bar carries order:-2, so it paints above the header in
+     the terminal's flex column. On desktop the terminal never scrolls and the
+     sticky header is harmless; once the page scrolls on a phone the header
+     pinned itself to top:0 and landed on top of that bar. Static + ordered
+     first puts them back in reading order. */
+  .posTerminal > .posHeader {
+    position:static !important;
+    order:-3 !important;
+    flex-wrap:wrap !important;
+    padding:10px 14px 10px 62px !important;
+    row-gap:8px;
+  }
+  .posTerminal > .posSaleActions { order:-2 !important; flex:0 0 auto !important; height:auto !important; }
+  .posTerminal > .posNotice { order:-1 !important; }
+  .posBrandBlock { flex:1 1 100%; padding-right:300px; }
+  .posHeaderRight {
+    flex:1 1 100% !important;
+    order:3;
+    justify-content:flex-start !important;
+    margin-left:0 !important;
+  }
+}
+@media (max-width:560px) {
+  .posBrandBlock { padding-right:262px; }
+  .posBrandBlock b { display:none; }
+}
+
+/* --- scan row: customer on the left, a shorter scan field beside it --- */
+.posScanRow {
+  display:grid !important;
+  grid-template-columns:minmax(180px, 250px) minmax(0, 1fr);
+  align-items:end;
+  gap:10px;
+  margin-bottom:2px;
+}
+.posCustomerPicker { display:grid !important; gap:5px; min-width:0; }
+.posCustomerPicker > span {
+  color:var(--faint) !important;
+  font-size:9px; font-weight:850; letter-spacing:.12em; text-transform:uppercase;
+}
+.posCustomerPicker select {
+  height:48px;
+  width:100%;
+  padding:0 12px;
+  font-size:12.5px;
+  font-weight:700;
+  border-radius:var(--radius) !important;
+}
+.posScanRow .posSearchBar { margin:0 !important; height:48px !important; align-self:end; }
+
+@media (max-width:640px) {
+  .posScanRow { grid-template-columns:minmax(0,1fr); }
+  .posCustomerPicker select, .posScanRow .posSearchBar { height:44px !important; }
+}
+
+/* --- row-style lists: one row per record, the row itself reflows --------- */
+.policyGrid, .coaGrid { display:grid !important; gap:var(--gap) !important; }
+/* a chart-of-accounts column needs room for code + name + status + two actions
+   on one line; 340px forced the buttons to stack and doubled every row height */
+.coaGrid { grid-template-columns:repeat(auto-fit, minmax(min(100%, 480px), 1fr)) !important; }
+.coaGroup > div, .coaGroup li, .coaGroup > article { align-items:center; }
+.coaGroup .rowActions, .coaGroup .recordActions { flex-wrap:nowrap; justify-content:flex-end; }
+.policyGrid { grid-template-columns:minmax(0,1fr) !important; }
+.policyGrid article {
+  grid-template-columns:minmax(140px,1fr) repeat(2, minmax(84px, 110px)) minmax(74px, 90px) !important;
+  gap:10px !important;
+}
+@media (max-width:720px) {
+  .policyGrid article { grid-template-columns:repeat(2, minmax(0,1fr)) !important; }
+  .policyGrid article > div, .policyGrid article > button { grid-column:1 / -1 !important; }
+}
+
+/* --- tone modifiers on whole cards keep the card shape, gain an accent --- */
+.expiryStat, .salesSummary > *, .expirySummary > * {
+  border-radius:var(--radius-lg) !important;
+  display:flex !important;
+  flex-direction:column;
+  justify-content:center;
+  align-items:stretch !important;
+  width:auto !important;
+  text-align:left;
+  gap:5px;
+  padding:16px 18px !important;
+  min-height:92px;
+}
+/* the dashboard tile keeps its icon beside the number, not above it */
+.metricCard, .financeMetric {
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  gap:13px;
+  width:auto !important;
+  border-radius:var(--radius-lg) !important;
+}
+.metricCard > div, .metricCard > span:not(.metricIcon), .financeMetric > div { min-width:0; }
+.metricIcon { flex:0 0 40px; }
+.expiryStat { cursor:pointer; }
+.expiryStat:disabled { cursor:default; opacity:1; background:var(--glass) !important; color:var(--text) !important; }
+.expiryStat > span, .expirySummary > * > span {
+  color:var(--subtle) !important;
+  font-size:10.5px !important; font-weight:800; letter-spacing:.07em; text-transform:uppercase;
+}
+.expiryStat > b { font-size:22px !important; font-weight:800; letter-spacing:-.02em; color:var(--text) !important; font-variant-numeric:tabular-nums; }
+.expiryStat > small { color:var(--subtle) !important; font-size:11px; }
+.expiryStat.danger  { box-shadow:var(--glass-hi), var(--glass-lo), var(--shadow), inset 3px 0 0 var(--danger) !important; }
+.expiryStat.warning { box-shadow:var(--glass-hi), var(--glass-lo), var(--shadow), inset 3px 0 0 var(--warning) !important; }
+.expiryStat.success { box-shadow:var(--glass-hi), var(--glass-lo), var(--shadow), inset 3px 0 0 var(--success) !important; }
+.expiryStat.info    { box-shadow:var(--glass-hi), var(--glass-lo), var(--shadow), inset 3px 0 0 var(--info) !important; }
+.expiryStat.danger > b  { color:var(--danger) !important; }
+.expiryStat.warning > b { color:var(--warning) !important; }
+.expiryStat.success > b { color:var(--success) !important; }
+
+/* a notice keeps its block shape too */
+.financeNotice.success, .financeNotice.warning, .financeNotice.error {
+  display:block !important; width:auto !important; border-radius:var(--radius) !important;
+  padding:12px 15px !important; font-size:12px !important; letter-spacing:0 !important;
+}
+
+/* table headers need a touch more contrast against the frosted band */
+table thead th { color:var(--subtle) !important; }
+
+/* empty states inside a card shouldn't be a second slab */
+.emptyState, .dashboardEmpty, .emptyCatalogue, .emptyTable, .compactEmpty, .returnEmpty {
+  padding:38px 20px !important;
+}
+
+/* --- a colSpan empty cell is still a table cell ------------------------- */
+td.emptyTable, td.emptyState, td.dashboardEmpty, td.compactEmpty, td.returnEmpty,
+.emptyTable[colspan], tbody td.emptyTable {
+  display:table-cell !important;
+  text-align:center;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  padding:44px 18px !important;
+  color:var(--subtle) !important;
+}
+
+/* --- segmented rails: same pill whether the item is a button or a link --- */
+.workflowTabs, .taxonomyTabs, .accountingTabs, .financeTabs, .expiryViews, .tabRail {
+  display:flex !important;
+}
+.workflowTabs > *, .taxonomyTabs > *, .accountingTabs > *, .financeTabs > *,
+.expiryViews > *, .tabRail > * {
+  flex:1 1 auto;
+  text-align:center;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* =====================================================================
+   23. CLASSLESS CONTROLS
+   153 buttons in this codebase carry no class at all and were falling back
+   to the user-agent's light grey chrome — a white button on a dark panel.
+   They get the neutral glass pill; anything with a class still wins.
+   ===================================================================== */
+button:not([class]) {
+  padding:8px 14px;
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-sm) !important;
+  color:var(--text) !important;
+  font:inherit;
+  font-size:11.5px;
+  font-weight:750;
+  line-height:1.4;
+  cursor:pointer;
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  backdrop-filter:blur(14px) saturate(150%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.10), var(--shadow-xs) !important;
+}
+button:not([class]):hover {
+  background:var(--surface-2) !important;
+  border-color:var(--border-strong) !important;
+}
+button:not([class]):disabled {
+  opacity:.55; cursor:not-allowed;
+  background:var(--surface-2) !important;
+  color:var(--faint) !important;
+}
+/* a bare close button in a dialog header is an icon, not a pill */
+.workflowModal header > button:not([class]), .documentModal header > button:not([class]),
+.transactionDialog header > button:not([class]), .actionDialog header > button:not([class]),
+.userEditorDialog header > button:not([class]), .receiveModal header > button:not([class]),
+.paymentModal header > button:not([class]), .expiryModal header > button:not([class]),
+.editGrnModal header > button:not([class]), .invoicePanel header > button:not([class]) {
+  width:32px; height:32px; padding:0;
+  display:grid; place-items:center;
+  border-radius:var(--radius-pill) !important;
+  font-size:16px; line-height:1;
+}
+
+a:not([class]) { color:var(--brand); text-decoration-thickness:1px; text-underline-offset:2px; }
+
+/* selects need their own arrow on a dark surface */
+select {
+  appearance:none; -webkit-appearance:none;
+  padding-right:32px !important;
+  background-image:linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%) !important;
+  background-position:calc(100% - 17px) calc(50% + 1px), calc(100% - 12px) calc(50% + 1px) !important;
+  background-size:5px 5px, 5px 5px !important;
+  background-repeat:no-repeat !important;
+}
+select option { background:var(--solid); color:var(--text); }
+
+@media (max-width:359px) {
+  .dashboardMetrics, .financeMetrics, .catalogStats, .syncMetrics,
+  .profileMetrics, .cashierMetrics, .adminSummary, .stats {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+}
+/* horizontal rails bleed into the page gutter so the cut edge reads as scrollable */
+@media (max-width:767px) {
+  .periodPicker, .reportPresets, .customRange, .expiryViews,
+  .workflowTabs, .accountingTabs, .financeTabs, .taxonomyTabs {
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    scrollbar-width:none;
+    scroll-snap-type:x proximity;
+  }
+  .periodPicker::-webkit-scrollbar, .reportPresets::-webkit-scrollbar,
+  .workflowTabs::-webkit-scrollbar, .accountingTabs::-webkit-scrollbar,
+  .financeTabs::-webkit-scrollbar, .taxonomyTabs::-webkit-scrollbar { height:0; }
+  .periodPicker > *, .reportPresets > *, .customRange > *, .expiryViews > *,
+  .workflowTabs > *, .accountingTabs > *, .financeTabs > *, .taxonomyTabs > * {
+    flex:0 0 auto !important; white-space:nowrap; scroll-snap-align:start;
+  }
+}
+
+/* =====================================================================
+   24. MOBILE METRIC TILES (last word — must win over section 21)
+   The tile value carries white-space:nowrap from the original stylesheet,
+   so a long currency string was being clipped by the card's overflow.
+   ===================================================================== */
+@media (max-width:767px) {
+  .metricCard b, .financeMetric b, .expiryStat > b {
+    font-size:clamp(14px, 4.4vw, 19px) !important;
+    white-space:normal !important;
+    overflow-wrap:anywhere;
+    line-height:1.25;
+  }
+  .metricCard small, .financeMetric small {
+    font-size:9.5px !important;
+    letter-spacing:.05em;
+  }
+}
+@media (max-width:520px) {
+  .metricCard, .financeMetric {
+    flex-direction:column !important;
+    align-items:flex-start !important;
+    gap:9px !important;
+    padding:14px !important;
+    min-height:86px !important;
+  }
+  .metricIcon { flex:0 0 34px !important; width:34px !important; height:34px !important; border-radius:11px !important; }
+  .metricIcon svg { width:16px; height:16px; }
+}
+
+/* =====================================================================
+   25. TOP-BAR ACTION ON SMALL SCREENS
+   The old stylesheet collapsed `.topbar .new` to `font-size:0` and tried to
+   show only its first letter, which renders as an empty red blob because
+   ::first-letter does not apply to an inline-flex box. The label comes back.
+   ===================================================================== */
+.topbar .new, .topbar .primary, .topbar .primaryAction,
+.app > header .new, .app > header .primary {
+  font-size:12px !important;
+  white-space:nowrap;
+  padding:10px 15px !important;
+  min-height:38px;
+}
+.topbar .new:first-letter, .app > header .new:first-letter { font-size:inherit !important; }
+
+@media (max-width:900px) {
+  .topbar, .app > header {
+    display:flex !important;
+    flex-direction:row !important;
+    align-items:center !important;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .topbar > div:first-child, .app > header > div:first-child { flex:1 1 auto; min-width:0; }
+  .topbar > div:first-child b { display:block; font-size:15px; }
+  .topbar .new, .topbar .primary, .topbar button, .app > header .new {
+    flex:0 0 auto;
+    font-size:11.5px !important;
+    padding:9px 13px !important;
+  }
+}
+@media (max-width:479px) {
+  .topbar .new, .topbar .primary, .topbar button { font-size:11px !important; padding:9px 11px !important; }
+  .topbar > div:first-child b { font-size:14px; }
+}
+
+/* =====================================================================
+   26. NOTHING IS HIDDEN JUST BECAUSE THE SCREEN IS SMALL
+   The previous responsive pass hid secondary top-bar actions below the
+   tablet breakpoint (Export CSV disappeared on a phone). Small screens get
+   a smaller control, not a missing feature.
+   ===================================================================== */
+.salesTopActions .ghostButton, .topbarActions .ghostButton,
+.expiryTopActions .ghostButton, .barcodeTopActions .ghostButton,
+.catalogueTools .ghostButton, .archiveToolbar .ghostButton {
+  display:inline-flex !important;
+  align-items:center;
+  justify-content:center;
+}
+@media (max-width:767px) {
+  .salesTopActions, .topbarActions, .expiryTopActions, .barcodeTopActions {
+    display:flex !important;
+    flex-wrap:wrap;
+    gap:8px;
+    justify-content:flex-end;
+  }
+  .salesTopActions .ghostButton, .topbarActions .ghostButton,
+  .expiryTopActions .ghostButton, .barcodeTopActions .ghostButton {
+    font-size:11px !important;
+    padding:9px 11px !important;
+    min-height:36px;
+  }
+}
+
+/* =====================================================================
+   27. REPORT FILTER BAR
+   `.reportFilters` is a legacy `display:flex; flex-wrap:wrap` row. Once the
+   filter grid became auto-fit its flex base shrank enough to fit beside the
+   preset rail, and both stretched to the container height — the presets
+   rendered as full-height lozenges. The bar is a vertical stack.
+   ===================================================================== */
+.reportFilters { display:block !important; }
+.reportPresets { margin:0 0 12px !important; width:fit-content; max-width:100%; }
+.reportFilterGrid { width:100%; }
+
+/* no segmented rail ever stretches to its parent's height */
+.periodPicker, .accountingTabs, .financeTabs, .workflowTabs, .taxonomyTabs, .expiryViews,
+.tabRail, .cartDensity, .paymentMethods, .reportPresets, .customRange, .purchaseSteps,
+.returnSteps, .importSteps {
+  align-items:center !important;
+  align-self:start;
+  height:auto !important;
+}
+.periodPicker > *, .accountingTabs > *, .financeTabs > *, .workflowTabs > *,
+.taxonomyTabs > *, .expiryViews > *, .tabRail > *, .cartDensity > *,
+.paymentMethods > *, .reportPresets > *, .customRange > * {
+  align-self:center;
+  height:auto !important;
+  min-height:34px;
+}
+
+/* =====================================================================
+   28. ACTIVE TAB — specificity
+   globals.css carries `.financeTabs button.active { ... !important }` at
+   (0,2,1), which outranked the tag-agnostic `.financeTabs > .active` at
+   (0,2,0). Doubling the container class takes it to (0,3,0) so one rule
+   describes the active pill everywhere, for buttons and links alike.
+   ===================================================================== */
+.periodPicker.periodPicker > .active,
+.accountingTabs.accountingTabs > .active,
+.financeTabs.financeTabs > .active,
+.workflowTabs.workflowTabs > .active,
+.taxonomyTabs.taxonomyTabs > .active,
+.expiryViews.expiryViews > .active,
+.tabRail.tabRail > .active,
+.cartDensity.cartDensity > .active,
+.paymentMethods.paymentMethods > .active,
+.reportPresets.reportPresets > .active,
+.customRange.customRange > .active,
+.reportCatalogue.reportCatalogue .active {
+  background:linear-gradient(150deg, var(--brand), var(--brand-dark)) !important;
+  border-color:rgba(255,255,255,.20) !important;
+  color:#fff !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.30), 0 6px 16px rgba(255,60,72,.26) !important;
+}
+.taxonomyTabs.taxonomyTabs > .active b,
+.taxonomyTabs.taxonomyTabs > .active small,
+.tabRail.tabRail > .active small { color:#fff !important; }
+
+/* checkboxes should read as checkboxes, and be visible when unchecked */
+input[type="checkbox"] {
+  appearance:none; -webkit-appearance:none;
+  width:17px; height:17px;
+  border:1.5px solid var(--border-strong);
+  border-radius:5px;
+  background:var(--surface-2);
+  display:inline-grid; place-content:center;
+  cursor:pointer;
+  transition:background .15s var(--ease), border-color .15s var(--ease);
+}
+input[type="checkbox"]::before {
+  content:""; width:9px; height:9px;
+  transform:scale(0); transition:transform .12s var(--ease);
+  box-shadow:inset 9px 9px #fff;
+  clip-path:polygon(14% 44%, 0 65%, 43% 100%, 100% 22%, 80% 4%, 40% 64%);
+}
+input[type="checkbox"]:checked {
+  background:linear-gradient(150deg, var(--brand), var(--brand-dark));
+  border-color:transparent;
+}
+input[type="checkbox"]:checked::before { transform:scale(1); }
+input[type="checkbox"]:hover { border-color:var(--brand); }
+input[type="radio"] { width:17px; height:17px; accent-color:var(--brand); }
+
+/* filter labels keep clear of their field */
+.reportFilterGrid label, .expiryFilters label, .salesFilters label, .syncFilters label {
+  display:grid; gap:6px; align-content:start;
+}
+
+/* the permission matrix ships its own checkbox skin at (0,2,1) — match it */
+.roleMatrix input[type="checkbox"], .permissionPanel input[type="checkbox"],
+.checkField input[type="checkbox"], .roleList input[type="checkbox"],
+.returnLines input[type="checkbox"], .archiveList input[type="checkbox"] {
+  appearance:none !important; -webkit-appearance:none !important;
+  width:18px !important; height:18px !important;
+  border:1.5px solid var(--border-strong) !important;
+  border-radius:5px !important;
+  background:var(--surface-2) !important;
+  box-shadow:none !important;
+  display:inline-grid !important; place-content:center;
+  margin:0 !important;
+}
+.roleMatrix input[type="checkbox"]:checked, .permissionPanel input[type="checkbox"]:checked,
+.checkField input[type="checkbox"]:checked, .roleList input[type="checkbox"]:checked,
+.returnLines input[type="checkbox"]:checked, .archiveList input[type="checkbox"]:checked {
+  background:linear-gradient(150deg, var(--brand), var(--brand-dark)) !important;
+  border-color:transparent !important;
+  box-shadow:0 2px 8px rgba(255,60,72,.3) !important;
+}
+.roleMatrix input[type="checkbox"]:checked::after,
+.roleMatrix input[type="checkbox"]:checked:after {
+  content:"" !important; display:none !important;
+}
+
+/* two-line tabs (label + hint) stack instead of running together */
+.taxonomyTabs > *, .tabRail > *, .purchaseSteps > *, .returnSteps > *, .importSteps > * {
+  flex-direction:column !important;
+  gap:2px;
+  line-height:1.3;
+  padding:8px 14px !important;
+}
+.taxonomyTabs > * b, .tabRail > * b { font-size:12px; font-weight:800; }
+.taxonomyTabs > * small, .tabRail > * small { font-size:9.5px; opacity:.8; font-weight:650; }
+
+/* =====================================================================
+   29. REPORT CATALOGUE ON TABLET AND BELOW
+   Turning the vertical rail into a horizontal scroller left six clipped
+   rows. Below the desktop breakpoint it becomes a wrapping chip cloud, so
+   every report name is visible without scrolling in two axes.
+   ===================================================================== */
+@media (max-width:1023px) {
+  .reportCatalogue {
+    position:static !important;
+    display:flex !important;
+    flex-direction:row !important;
+    flex-wrap:wrap !important;
+    align-content:flex-start;
+    overflow:visible !important;
+    gap:7px !important;
+    padding:12px !important;
+    max-height:none !important;
+  }
+  .reportCatalogue > div { display:contents !important; }
+  .reportCatalogue small { display:none !important; }
+  .reportCatalogue button {
+    flex:0 0 auto;
+    width:auto !important;
+    white-space:nowrap;
+    padding:8px 12px !important;
+    border:1px solid var(--glass-brd-2) !important;
+    border-radius:var(--radius-pill) !important;
+    background:var(--surface-2) !important;
+    font-size:10.5px !important;
+  }
+  .reportCatalogue .active {
+    background:linear-gradient(150deg, var(--brand), var(--brand-dark)) !important;
+    border-color:transparent !important;
+    color:#fff !important;
+  }
+}
+
+/* top-bar action cluster hugs its buttons and stays right-aligned at every width */
+.topbarActions, .salesTopActions, .expiryTopActions, .barcodeTopActions {
+  display:flex !important;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:flex-end;
+  gap:8px;
+  width:auto !important;
+  flex:0 1 auto !important;
+  margin-left:auto;
+}
+.topbarActions > *, .salesTopActions > *, .expiryTopActions > *,
+.barcodeTopActions > *, .archiveToolbar > * { flex:0 0 auto !important; width:auto !important; }
+
+/* =====================================================================
+   30. LAST DETAILS
+   ===================================================================== */
+/* a status chip never wraps mid-word inside a narrow table column */
+.saleStatus, .paymentBadge, .draftBadge, .promoBadge, .stockBadge,
+.cartCountBadge, .countBadge, .registerStatus b,
+span.success, span.warning, span.error, span.expected,
+em.success, em.warning, em.error,
+b.success, b.warning, b.error,
+small.success, small.warning, small.error {
+  white-space:nowrap !important;
+}
+
+/* `.catalogStats` is a pair of inline counters, not a metric grid — auto-fitting
+   it into full-width rows stacked "3 Active" above "4 Total" in a thin column */
+.catalogStats {
+  display:flex !important;
+  flex-wrap:wrap;
+  gap:8px !important;
+  width:auto !important;
+  grid-template-columns:none !important;
+}
+.catalogStats > * {
+  flex:0 0 auto;
+  display:inline-flex !important;
+  align-items:baseline;
+  gap:6px;
+  min-height:0 !important;
+  padding:8px 14px !important;
+  border-radius:var(--radius-pill) !important;
+  white-space:nowrap;
+}
+.catalogStats > * b, .catalogStats > * strong { font-size:14px; font-weight:800; color:var(--text); }
+.catalogStats > * small, .catalogStats > * span { font-size:10.5px; color:var(--subtle); }
+
+/* dim-on-dim status text in the chart of accounts */
+.coaGroup small, .coaGroup span { color:var(--subtle) !important; }
+
+/* multi-action row: keep the buttons on one line where they fit */
+.rowActions, .recordActions, .productActions {
+  display:flex !important;
+  flex-wrap:wrap;
+  gap:7px !important;
+  justify-content:flex-start;
+}
+.rowActions > *, .recordActions > *, .productActions > * { white-space:nowrap; }
+
+/* =====================================================================
+   31. .tabRail IS A VERTICAL LIST, NOT A PILL RAIL
+   Its items are an icon chip plus a label; the segmented-control treatment
+   stacked them into circles. It gets its own skin here, last word.
+   ===================================================================== */
+.tabRail {
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:stretch !important;
+  gap:4px !important;
+  padding:9px !important;
+  border-radius:var(--radius-lg) !important;
+  overflow:visible !important;
+}
+.tabRail > * {
+  flex:0 0 auto !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  gap:10px;
+  width:100%;
+  text-align:left !important;
+  padding:10px 11px !important;
+  border-radius:var(--radius-sm) !important;
+  font-size:11.5px !important;
+  min-height:40px;
+}
+.tabRail > * > span {
+  display:grid; place-items:center;
+  flex:0 0 26px; width:26px; height:26px;
+  border-radius:8px;
+  background:var(--surface-2);
+  border:1px solid var(--glass-brd-2);
+  color:var(--subtle);
+  font-size:11px; font-weight:800;
+}
+.tabRail.tabRail > .active { border-radius:var(--radius-sm) !important; }
+.tabRail.tabRail > .active > span { background:rgba(255,255,255,.22) !important; color:#fff !important; border-color:transparent; }
+
+@media (max-width:1023px) {
+  .tabRail {
+    flex-direction:row !important;
+    flex-wrap:wrap !important;
+    border-radius:var(--radius-lg) !important;
+  }
+  .tabRail > * { width:auto !important; }
+}
+
+/* =====================================================================
+   32. FILTER FORMS REFLOW
+   `.salesFilters` declared eight fixed-minimum columns (1086px of hard
+   minimum), which overflowed the content area at 1280px and pushed the
+   Reset button off-screen. Every filter form now fits its columns to the
+   space it actually has.
+   ===================================================================== */
+.salesFilters, .expiryFilters, .accountingFilters, .syncFilters, .catalogueTools,
+.inventorySearch, .archiveToolbar, .approvalsPage form, .directoryPage form {
+  display:grid !important;
+  grid-template-columns:repeat(auto-fit, minmax(min(100%, 150px), 1fr)) !important;
+  gap:var(--gap) !important;
+  align-items:end;
+}
+.salesFilters .wide, .expiryFilters .wide { grid-column:span 2; }
+.salesFilters .filterActions, .expiryFilters .filterActions,
+.accountingFilters .filterActions, .syncFilters .filterActions {
+  grid-column:1 / -1;
+  display:flex !important;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:8px !important;
+}
+.filterActions button { flex:0 0 auto !important; min-height:38px; }
+@media (max-width:560px) {
+  .salesFilters .wide, .expiryFilters .wide { grid-column:1 / -1; }
+  .filterActions button { flex:1 1 120px !important; }
+}
+
+/* table headers break words ("PAYMEN / T") under overflow-wrap:anywhere —
+   they are short labels and the table already scrolls, so let them stay whole */
+table thead th { overflow-wrap:normal !important; word-break:keep-all; hyphens:none; }
+
+/* =====================================================================
+   33. BARCODE MANAGER
+   `.barcodeVisual` is a printed label preview — it must stay white paper
+   with black ink, so it is excluded from the glass surface list. The cards
+   were also too narrow, which broke every product name onto its own line.
+   ===================================================================== */
+.barcodeGrid { grid-template-columns:repeat(auto-fill, minmax(min(100%, 250px), 1fr)) !important; }
+.barcodeGrid > article {
+  display:grid !important;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:start;
+  gap:10px;
+  padding:14px !important;
+}
+.barcodeGrid > article > div { min-width:0; }
+.barcodeGrid > article > div b { display:block; font-size:12.5px; line-height:1.35; overflow-wrap:break-word; }
+.barcodeGrid > article > div small { color:var(--subtle); font-size:10px; }
+.barcodeGrid > article > .status {
+  align-self:start;
+  height:auto !important;
+  padding:4px 10px !important;
+  border-radius:var(--radius-pill) !important;
+  font-size:9.5px; font-weight:800; white-space:nowrap;
+  background:var(--success-soft) !important; color:var(--success) !important;
+  border:1px solid rgba(63,206,139,.26);
+}
+.barcodeGrid > article > .status.inactive {
+  background:var(--warning-soft) !important; color:var(--warning) !important;
+  border-color:rgba(240,179,84,.26);
+}
+.barcodeVisual {
+  grid-column:1 / -1;
+  display:grid !important; justify-items:center; gap:3px;
+  background:#ffffff !important;
+  color:#111 !important;
+  border:1px solid rgba(0,0,0,.12) !important;
+  border-radius:var(--radius-sm) !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+  padding:12px 10px !important;
+  overflow:hidden;
+}
+.barcodeVisual em {
+  font-family:'Libre Barcode 39', 'Spline Sans Mono', monospace;
+  font-style:normal; font-size:24px; letter-spacing:.06em; color:#111;
+  max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.barcodeVisual strong { font-size:10px; letter-spacing:.16em; color:#222; font-weight:700; }
+.barcodeVisual small { font-size:10px; color:#444; }
+.barcodeGrid > article > a {
+  grid-column:1 / -1;
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:9px 12px;
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-sm) !important;
+  color:var(--text) !important;
+  font-size:11px; font-weight:750; text-decoration:none;
+}
+.barcodeGrid > article > a:hover { background:var(--surface-2) !important; border-color:var(--border-strong) !important; }
+.barcodeGrid > article > input[type="checkbox"] { margin-top:2px; }
+
+/* =====================================================================
+   34. ADMIN CENTRE
+   `.adminSummary` is three inline counters, not a metric grid — auto-fitting
+   it stacked them into a thin column beside the page heading.
+   ===================================================================== */
+.adminSummary, .catalogStats, .syncMetrics.inline {
+  display:flex !important;
+  flex-wrap:wrap;
+  gap:8px !important;
+  width:auto !important;
+  grid-template-columns:none !important;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+.adminSummary > span, .adminSummary > * {
+  display:inline-flex !important;
+  align-items:baseline;
+  gap:6px;
+  flex:0 0 auto;
+  min-height:0 !important;
+  padding:8px 14px !important;
+  border-radius:var(--radius-pill) !important;
+  background:var(--surface) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  color:var(--subtle) !important;
+  font-size:10.5px; font-weight:700;
+  white-space:nowrap;
+}
+.adminSummary > * b { font-size:14px; font-weight:800; color:var(--text); }
+
+/* notification rows: icon, body, actions — one clean three-column row */
+.notificationList > article {
+  display:grid !important;
+  grid-template-columns:auto minmax(0,1fr) auto;
+  align-items:center;
+  gap:14px;
+  padding:14px 16px !important;
+  border-bottom:1px solid var(--border) !important;
+}
+.notificationList > article:last-child { border-bottom:0 !important; }
+.notificationList > article > div { min-width:0; display:grid; gap:3px; }
+.notificationList > article header {
+  display:flex !important; align-items:center; gap:9px; flex-wrap:wrap;
+  background:transparent !important; border:0 !important; padding:0 !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important; backdrop-filter:none !important;
+}
+.notificationList > article header b { font-size:12.5px; color:var(--text); }
+.notificationList > article header em {
+  font-style:normal; font-size:9.5px; font-weight:800;
+  letter-spacing:.06em; text-transform:uppercase;
+  padding:3px 9px; border-radius:var(--radius-pill);
+  background:var(--surface-2); color:var(--subtle);
+}
+.notificationList > article p { margin:0; color:var(--subtle); font-size:11.5px; }
+.notificationList > article > small { color:var(--faint); font-size:10px; }
+.notificationList > article footer {
+  display:flex !important; gap:7px; flex-wrap:wrap; justify-content:flex-end;
+  background:transparent !important; border:0 !important; padding:0 !important;
+}
+.notificationList > article footer a {
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:8px 13px; border-radius:var(--radius-sm);
+  background:linear-gradient(150deg, var(--brand), var(--brand-dark));
+  color:#fff !important; font-size:11px; font-weight:750; text-decoration:none;
+  white-space:nowrap;
+}
+@media (max-width:640px) {
+  .notificationList > article { grid-template-columns:auto minmax(0,1fr); }
+  .notificationList > article footer { grid-column:1 / -1; justify-content:flex-start; }
+}
+
+/* =====================================================================
+   35. PAGE-LEVEL FILTER BARS
+   `.productToolbar` and friends are full-width search rows, not top-bar
+   action clusters — right-aligning them squeezed the search field into a
+   stub and stacked the status select underneath it.
+   ===================================================================== */
+.productToolbar, .catalogueTools, .taxonomyTools, .archiveToolbar, .alertToolbar, .expiryTopActions {
+  display:flex !important;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:var(--gap) !important;
+  width:100% !important;
+  margin:0 0 var(--stack) !important;
+  justify-content:flex-start;
+}
+.productToolbar > label, .productToolbar > .catalogSearch, .productToolbar > .catalogueSearch,
+.catalogueTools > label, .taxonomyTools > label, .archiveToolbar > label {
+  flex:1 1 260px;
+  min-width:0;
+}
+.productToolbar > select, .catalogueTools > select, .taxonomyTools > select,
+.archiveToolbar > select, .productToolbar > button, .catalogueTools > button {
+  flex:0 0 auto;
+  min-width:160px;
+}
+.catalogSearch, .catalogueSearch, .inventorySearch, .searchField {
+  display:flex !important;
+  align-items:center;
+  gap:9px;
+  padding:0 13px !important;
+  min-height:44px;
+  /* width:100% would make this a full-line flex item and push the status
+     select onto its own row; the flex basis on the toolbar handles sizing */
+  width:auto;
+  min-width:0;
+}
+.catalogSearch input, .catalogueSearch input, .inventorySearch input, .searchField input {
+  flex:1 1 auto;
+  border:0 !important;
+  background:transparent !important;
+  box-shadow:none !important;
+  min-width:0;
+  height:100%;
+}
+.catalogSearch input:focus, .searchField input:focus { box-shadow:none !important; }
+
+/* uniform card grids keep their card width when only one record exists */
+.promotionGrid, .branchGrid, .catalogueGrid {
+  grid-template-columns:repeat(auto-fill, minmax(min(100%, 330px), 1fr)) !important;
+}
+
+/* =====================================================================
+   36. FORM LABELS
+   Most forms here are written as `<label>Caption<input/></label>` with no
+   wrapper, so the caption sat on the same line as the control ("Payment
+   accountSelect account"). Any label that directly holds a control becomes
+   a two-row grid.
+   ===================================================================== */
+.formSection label, .saasForm label, .financeForm label, .settingsForm label,
+.workflowForm label, .productForm label, .documentForm label, .inventoryWorkflowForm label,
+.dialogFieldGrid label, .journalHeaderFields label, .branchEditor label,
+.accountingEditor label, .promotionEditor label, .backupScheduleCard label,
+.contactForm label, .formField {
+  display:grid !important;
+  gap:6px;
+  align-content:start;
+  min-width:0;
+  color:var(--subtle);
+  font-size:10.5px;
+  font-weight:750;
+}
+label:has(> input:not([type="checkbox"]):not([type="radio"])),
+label:has(> select), label:has(> textarea), label:has(> .inlineSelect) {
+  display:grid;
+  gap:6px;
+  align-content:start;
+  min-width:0;
+}
+.formSection label > input, .formSection label > select, .formSection label > textarea,
+.saasForm label > input, .saasForm label > select, .saasForm label > textarea {
+  width:100%;
+  min-height:42px;
+  font-size:12px;
+  color:var(--text) !important;
+}
+.formSection label > textarea, .saasForm label > textarea { min-height:84px; padding-top:10px; }
+
+/* a checkbox label stays on one line */
+.checkField, .checkLabel, .splitToggle, .scheduleToggle, .settingSwitch,
+label:has(> input[type="checkbox"]), label:has(> input[type="radio"]) {
+  display:flex !important;
+  align-items:center;
+  gap:9px;
+  color:var(--text) !important;
+  font-size:11.5px;
+  cursor:pointer;
+}
+
+/* select + inline "add" button */
+.inlineSelect {
+  display:flex !important;
+  align-items:stretch;
+  gap:7px;
+  width:100%;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+}
+.inlineSelect select { flex:1 1 auto; min-width:0; }
+.inlineSelect button {
+  flex:0 0 42px;
+  display:grid; place-items:center;
+  border-radius:var(--radius-sm) !important;
+  font-size:15px; line-height:1;
+}
+.saasForm .wide, .formSection .wide { grid-column:1 / -1; }
+
+/* search fields are a row (icon + input), never a stacked label */
+.menuSearch, .posSearchBar, .barcodeInput, .scannerSearch, .catalogSearch,
+.catalogueSearch, .inventorySearch, .searchField {
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:center !important;
+  gap:9px;
+}
+.menuSearch > span, .posSearchBar > span:first-child, .catalogSearch > span,
+.catalogueSearch > span, .inventorySearch > span, .searchField > span:first-child {
+  flex:0 0 auto;
+  display:grid; place-items:center;
+  color:var(--faint);
+}
+.menuSearch input { flex:1 1 auto; min-width:0; border:0 !important; background:transparent !important; box-shadow:none !important; }
+
+/* a full-width field inside a two-column form section stays in the field
+   column on desktop rather than jumping under the section caption */
+@media (min-width:1024px) {
+  .formSection > .wide { grid-column:2 / -1 !important; }
+}
+
+/* =====================================================================
+   37. NARROW-SCREEN RAILS AND SEARCH ROWS (final word)
+   ===================================================================== */
+@media (max-width:767px) {
+  .workflowTabs.workflowTabs > *, .accountingTabs.accountingTabs > *,
+  .financeTabs.financeTabs > *, .taxonomyTabs.taxonomyTabs > *,
+  .expiryViews.expiryViews > *, .periodPicker.periodPicker > *,
+  .reportPresets.reportPresets > * {
+    flex:0 0 auto !important;
+    width:auto !important;
+    white-space:nowrap;
+  }
+}
+
+/* the record-count badge drops below the search field before it squeezes it */
+@media (max-width:620px) {
+  .inventorySearch, .catalogSearch, .catalogueSearch, .searchField { flex:1 1 100% !important; }
+  /* a column flex container that still wraps will spill items into a second
+     COLUMN once its height is constrained — which is how the promotions status
+     select ended up 10px to the right of the toolbar at 390px */
+  .inventoryPage > .productToolbar, .productToolbar, .catalogueTools, .taxonomyTools {
+    flex-direction:column !important;
+    flex-wrap:nowrap !important;
+    align-items:stretch !important;
+    height:auto !important;
+  }
+  .productToolbar > *, .catalogueTools > *, .taxonomyTools > * { width:100% !important; min-width:0 !important; }
+}
+
+/* =====================================================================
+   38. `.inventorySearch` IS A CONTAINER, NOT A FIELD
+   It wraps a labelled input plus a record counter, so treating it as a
+   search field squeezed the input into a stub beside the count.
+   ===================================================================== */
+.inventorySearch {
+  display:flex !important;
+  flex-direction:row !important;
+  align-items:end !important;
+  gap:var(--gap) !important;
+  padding:14px 16px !important;
+  border-radius:var(--radius-lg) !important;
+}
+.inventorySearch > label {
+  display:grid !important;
+  gap:6px;
+  flex:1 1 auto;
+  min-width:0;
+  background:transparent !important;
+  border:0 !important;
+  box-shadow:none !important;
+  padding:0 !important;
+  color:var(--subtle);
+  font-size:10.5px; font-weight:750;
+}
+.inventorySearch > label input {
+  width:100%;
+  min-height:42px;
+  background:var(--surface-2) !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-sm) !important;
+  color:var(--text) !important;
+  padding:0 13px;
+  font-size:12px;
+}
+.inventorySearch > div {
+  flex:0 0 auto;
+  display:flex; align-items:baseline; gap:7px;
+  padding:10px 15px;
+  border-radius:var(--radius-pill);
+  background:var(--surface-2);
+  border:1px solid var(--glass-brd-2);
+  white-space:nowrap;
+}
+.inventorySearch > div b { font-size:15px; font-weight:800; color:var(--text); }
+.inventorySearch > div small { font-size:10.5px; color:var(--subtle); }
+@media (max-width:620px) {
+  .inventorySearch { flex-direction:column !important; align-items:stretch !important; }
+  .inventorySearch > div { align-self:flex-start; }
+}
+
+/* =====================================================================
+   39. `.productToolbar` LAYOUT IS DECLARED, NOT NEGOTIATED
+   Both children carry a width:100% from the original stylesheet, so as a
+   flex row each one claimed a full line and the status select always sat
+   below the search box. An explicit two-track grid settles it.
+   ===================================================================== */
+.productToolbar, .catalogueTools, .taxonomyTools {
+  display:grid !important;
+  grid-template-columns:minmax(0,1fr) minmax(160px, 230px);
+  align-items:center;
+  gap:var(--gap) !important;
+  width:100% !important;
+}
+.productToolbar > *, .catalogueTools > *, .taxonomyTools > * {
+  width:100% !important;
+  min-width:0 !important;
+  margin:0 !important;
+}
+.productToolbar > select, .catalogueTools > select, .taxonomyTools > select { min-height:44px; }
+@media (max-width:620px) {
+  .productToolbar, .catalogueTools, .taxonomyTools {
+    grid-template-columns:minmax(0,1fr) !important;
+  }
+}
+
+/* =====================================================================
+   40. LOGIN — FITS THE VIEWPORT, NO SCROLLING
+   The shell was a plain block: a 118px top bar, a grid asking for
+   `100vh - 215px`, and a footer below it, which together ran past the
+   fold so the "Developed by" mark could only be reached by scrolling.
+   On a laptop it is now a three-row viewport grid: bar, content, footer.
+   Type is up a step throughout, and the developer mark sits on one line.
+   ===================================================================== */
+/* The shell stays a block: four of its children are decorative absolutely
+   positioned layers, and re-flowing it as a grid moved the top bar into the
+   middle of the page. Only the heights change, so bar + content + footer
+   add up to exactly one viewport. */
+@media (min-width:1024px) {
+  main.pfShell { min-height:100dvh; height:auto; overflow-x:hidden; }
+  .pfShell > .pfGrid {
+    min-height:calc(100dvh - 112px) !important;
+    align-content:center;
+  }
+}
+
+/* --- top bar: half the height it was, same legibility ---------------- */
+.pfTopbar {
+  min-height:0 !important;
+  padding:14px 3vw 10px !important;
+  align-items:center !important;
+  font-size:10.5px !important;
+  letter-spacing:.24em !important;
+}
+.pfMicroBrand { flex-direction:row !important; gap:9px !important; align-items:center; }
+.pfMicroBrand i { margin-top:0 !important; margin-left:4px; }
+.pfTopMessage { padding-top:0 !important; font-size:10.5px !important; }
+
+/* --- the card carries the height budget, so it gives some back ------- */
+.pfCard { padding:26px 38px 24px !important; }
+.pfLogoWrap { margin-bottom:4px; }
+.pfZone { padding:6px 0 !important; }
+.pfLeft, .pfRight { padding:10px 0 !important; }
+
+/* --- type up a step across the page ---------------------------------- */
+.pfEyebrow { font-size:10.5px !important; letter-spacing:.24em !important; }
+.pfLead { font-size:14px !important; line-height:1.6; }
+.pfStats span { font-size:10px !important; letter-spacing:.18em !important; }
+.pfStats strong { font-size:21px !important; }
+.pfStatusCard small { font-size:10.5px !important; }
+.pfStatusCard strong { font-size:14px !important; }
+.pfFutureCopy span { font-size:11px !important; letter-spacing:.2em !important; }
+.pfKicker { font-size:10.5px !important; }
+.pfWelcome h2, .pfCard h2 { font-size:30px !important; }
+.pfFormRow > span, .pfPasswordField > span, .pfShell label { font-size:11.5px !important; }
+.pfShell input { font-size:13.5px !important; }
+.pfSecurityRow span, .pfSecurityRow small { font-size:10.5px !important; }
+.pfRemember span { font-size:12px !important; }
+
+/* --- footer: one line, readable, and above the fold ------------------ */
+.pfFooter {
+  padding:12px 0 16px !important;
+  font-size:10px !important;
+  letter-spacing:.18em !important;
+  gap:16px !important;
+  align-items:center !important;
+}
+.pfDevBrand {
+  flex-direction:row !important;
+  align-items:center !important;
+  gap:10px !important;
+  white-space:nowrap;
+}
+.pfDevBrand small { font-size:10px !important; letter-spacing:.16em !important; line-height:1; }
+.pfDevBrand img { height:19px !important; }
+
+@media (max-width:1023px) {
+  main.pfShell { height:auto; max-height:none; overflow:visible; }
+  .pfFooter { grid-template-columns:1fr !important; gap:10px !important; }
+  .pfDevBrand { justify-content:center; }
+}
+
+/* =====================================================================
+   41. LOGIN — CONTAINERS, GUTTERS AND CENTRING
+   Three problems the measurements showed:
+     - `.pfTopbar` was picking up the generic topbar skin, so it rendered as
+       a full-bleed panel strip with a border across the top of the page.
+     - `.pfLeft` and `.pfRight` are content columns, not cards, but were
+       being painted as glass with a hairline between them.
+     - The three bands sat on three different gutters (57 / 62 / 57 px).
+   All three now share one container, and the columns are transparent.
+   ===================================================================== */
+.pfShell .pfTopbar, .pfShell .pfGrid, .pfShell .pfFooter {
+  width:min(1780px, 94vw) !important;
+  margin-inline:auto !important;
+  padding-left:0 !important;
+  padding-right:0 !important;
+}
+
+/* Premium readable overlays and business documents */
+.workflowModal,.actionDialogBackdrop,.historyBackdrop{backdrop-filter:blur(8px)!important;background:rgba(3,6,14,.72)!important}
+.documentModal .printDocument{width:min(940px,calc(100vw - 40px))!important;max-height:calc(100dvh - 40px)!important;padding:30px!important;border:1px solid #dce2eb!important;border-radius:20px!important;background:#fff!important;color:#172033!important;box-shadow:0 30px 100px rgba(0,0,0,.5)!important}
+.printDocument :is(h1,h2,h3,b,strong,td){color:#172033!important}.printDocument :is(p,small,span){color:#5f6b7d!important}.printDocument>header{border-bottom:2px solid #172033!important}.printDocument .documentIdentity>div{border:1px solid #e2e7ef!important;background:#f7f9fc!important}.printDocument table{width:100%!important;border-collapse:collapse!important}.printDocument th{padding:12px!important;background:#172033!important;color:#fff!important}.printDocument td{padding:13px 12px!important;border-bottom:1px solid #e1e6ee!important}.printDocument .documentTotals{padding:14px!important;border:1px solid #dfe5ed!important;border-radius:12px!important;background:#f8fafc!important}.printDocument>footer{padding-top:16px!important;border-top:1px solid #e2e7ef!important}
+.auditDrawer{width:min(620px,100vw)!important;background:#fff!important;color:#172033!important}.auditDrawer :is(h2,b){color:#172033!important}.auditDrawer :is(p,small){color:#667287!important}.actionDialog{background:#fff!important;color:#172033!important;border-color:#dbe2ec!important}.actionDialog h2,.actionDialog label{color:#172033!important}.actionDialog>p{color:#59667a!important}.actionDialog textarea{background:#fff!important;color:#172033!important;border-color:#bdc7d6!important}
+.contactProfile{z-index:1201!important;width:min(920px,calc(100vw - 270px))!important;padding:0 26px 28px!important;background:#fff!important;color:#172033!important}.contactProfile>header{position:sticky!important;z-index:3;top:0!important;padding:22px 0 16px!important;background:#fff!important}.contactProfile>header h2,.contactProfile h3,.contactProfile b{color:#172033!important}.contactProfile>header p{margin:4px 0 0;color:#6b778a!important;font-size:11px}.profileMetrics{grid-template-columns:repeat(4,1fr)!important}.profileMetrics span{border:1px solid #e1e6ee!important;background:#f7f9fc!important}.profileTabs{position:sticky;z-index:2;top:87px;display:flex;gap:6px;padding:10px 0;border-bottom:1px solid #e2e7ef;background:#fff}.profileTabs button{padding:9px 12px;border:0;border-radius:9px;background:#f1f4f8;color:#59667a;font-weight:750}.profileTabs button.active{background:#e9edff;color:#4657d6}.profileTabs span{margin-left:5px;padding:2px 5px;border-radius:10px;background:#fff}.contactInfo{display:grid!important;grid-template-columns:repeat(3,1fr);gap:10px!important;margin-top:16px!important;padding:16px!important;border:1px solid #e1e6ee!important;background:#f8fafc!important}.contactInfo h3{grid-column:1/-1}.contactInfo p{display:grid;gap:4px;margin:0!important;padding:10px;border-radius:8px;background:#fff;color:#59667a!important}.contactInfo p b{font-size:9px}.profileQuickActions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}.profileQuickActions a,.supplierProfileProducts header a{padding:10px 13px;border-radius:9px;background:#5566e8;color:#fff;text-decoration:none;font-size:10px;font-weight:800}.supplierProfileProducts>header{display:flex;align-items:center;justify-content:space-between;margin-top:16px;padding:14px 0}.supplierProfileProducts>header h3{margin:0}.supplierProfileProducts>header small{color:#6e7a8d}.supplierProfileProducts>article{display:grid;grid-template-columns:minmax(180px,1.6fr) repeat(3,minmax(90px,.7fr)) auto;gap:12px;align-items:center;padding:13px;border-bottom:1px solid #e4e8ef}.supplierProfileProducts article span,.supplierProfileProducts article div{display:grid;gap:3px}.supplierProfileProducts article small{color:#748095;font-size:8px}.supplierProfileProducts article>a{color:#4f5ed7;font-size:10px;font-weight:800}.profileEmpty{display:grid;place-items:center;gap:5px;min-height:150px;border:1px dashed #ccd4df;border-radius:12px;background:#f8fafc;color:#718095}.profileLedger strong{color:#12805f!important}
+@media(max-width:900px){.contactProfile{width:100vw!important}.profileMetrics{grid-template-columns:repeat(2,1fr)!important}.supplierProfileProducts>article{grid-template-columns:1fr 1fr}.supplierProfileProducts>article>span{grid-column:1/-1}.contactInfo{grid-template-columns:1fr}.contactInfo h3{grid-column:auto}}
+@media(max-width:560px){.documentModal{padding:0!important}.documentModal .printDocument{width:100vw!important;max-height:100dvh!important;min-height:100dvh!important;padding:18px!important;border:0!important;border-radius:0!important}.contactProfile{padding:0 15px 22px!important}.profileTabs{top:83px;overflow-x:auto}.profileTabs button{flex:0 0 auto}.supplierProfileProducts>article{grid-template-columns:1fr}.supplierProfileProducts>article>*{grid-column:auto!important}}
+@media print{body *{visibility:hidden!important}.printDocument,.printDocument *,.receiptPaper,.receiptPaper *,.invoiceDocument,.invoiceDocument *,.reportResultV2,.reportResultV2 *{visibility:visible!important}.printDocument,.receiptPaper,.invoiceDocument,.reportResultV2{position:absolute!important;inset:0 auto auto 0!important;width:100%!important;max-width:none!important;max-height:none!important;margin:0!important;padding:0!important;overflow:visible!important;border:0!important;border-radius:0!important;background:#fff!important;color:#111!important;box-shadow:none!important}.printDocument th{background:#f0f2f5!important;color:#111!important;border-bottom:2px solid #222!important}.printDocument td{color:#111!important}.receiptPaper{font-family:"Spline Sans Mono",monospace!important}.receiptPaper .receiptHeader b{font-size:16px!important;letter-spacing:.03em}.receiptPaper .receiptRow.total{margin:8px 0;padding:9px 0;border-top:2px solid #111;border-bottom:2px solid #111}.receiptActions,.noPrint{display:none!important}@page{margin:10mm}}
+
+.pfShell .pfTopbar {
+  background:none !important;
+  border:0 !important;
+  border-radius:0 !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+  padding-top:16px !important;
+  padding-bottom:12px !important;
+}
+
+.pfShell .pfLeft, .pfShell .pfRight, .loginPage > aside {
+  background:none !important;
+  border:0 !important;
+  box-shadow:none !important;
+  -webkit-backdrop-filter:none !important;
+  backdrop-filter:none !important;
+}
+
+/* the status stack was 290px inside a 506px column, which left the right
+   third looking unfinished — it fills its column now */
+.pfStatusStack { width:100% !important; }
+.pfRight { align-items:stretch; }
+.pfFutureCopy { width:100%; }
+
+/* the card and both columns share one optical centre line */
+.pfGrid { align-items:center !important; }
+.pfLeft, .pfRight { justify-content:center !important; }
+.pfZone { padding:0 !important; }
+
+@media (max-width:1023px) {
+  .pfShell .pfTopbar, .pfShell .pfGrid, .pfShell .pfFooter {
+    width:min(92vw, 620px) !important;
+  }
+}
+
+/* Supplier/customer profile: body-level responsive drawer. The portal keeps
+   fixed positioning independent from transformed application containers. */
+.contactProfileLayer {
+  position:fixed !important;
+  inset:0 !important;
+  z-index:5000 !important;
+  display:flex !important;
+  justify-content:flex-end !important;
+  overflow:hidden !important;
+  isolation:isolate;
+}
+.contactProfileBackdrop {
+  position:absolute !important;
+  inset:0 !important;
+  width:100% !important;
+  height:100% !important;
+  padding:0 !important;
+  border:0 !important;
+  border-radius:0 !important;
+  background:rgba(3,6,14,.66) !important;
+  -webkit-backdrop-filter:blur(10px) saturate(115%);
+  backdrop-filter:blur(10px) saturate(115%);
+  cursor:default;
+}
+.contactProfileLayer .contactProfile {
+  position:relative !important;
+  inset:auto !important;
+  z-index:1 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  width:min(860px, calc(100vw - 32px)) !important;
+  height:100dvh !important;
+  max-height:100dvh !important;
+  padding:0 !important;
+  overflow:hidden !important;
+  border:0 !important;
+  border-left:1px solid var(--glass-brd-2) !important;
+  border-radius:24px 0 0 24px !important;
+  background:linear-gradient(145deg, rgba(29,31,42,.96), rgba(13,17,28,.96)) !important;
+  color:var(--text) !important;
+  box-shadow:-28px 0 90px rgba(0,0,0,.52), inset 1px 0 rgba(255,255,255,.08) !important;
+  -webkit-backdrop-filter:blur(34px) saturate(145%);
+  backdrop-filter:blur(34px) saturate(145%);
+  animation:contactDrawerIn .22s var(--ease) both;
+}
+@keyframes contactDrawerIn { from { transform:translateX(28px); opacity:.55 } to { transform:none; opacity:1 } }
+.contactProfileLayer .contactProfileHeader {
+  position:relative !important;
+  inset:auto !important;
+  flex:0 0 auto;
+  display:flex !important;
+  align-items:center !important;
+  justify-content:space-between !important;
+  min-height:104px !important;
+  padding:22px 26px !important;
+  border-bottom:1px solid var(--border) !important;
+  background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.025)) !important;
+}
+.contactProfileIdentity { display:flex; align-items:center; gap:14px; min-width:0; }
+.contactProfileIdentity>i {
+  display:grid; place-items:center; flex:0 0 48px; width:48px; height:48px;
+  border-radius:15px; background:linear-gradient(145deg,var(--accent),#ff715f);
+  color:#fff; font-style:normal; font-size:18px; font-weight:850;
+  box-shadow:0 10px 28px rgba(255,60,72,.25), inset 0 1px rgba(255,255,255,.35);
+}
+.contactProfileIdentity span { min-width:0; }
+.contactProfileIdentity small { color:var(--accent) !important; font-size:9px !important; font-weight:850; letter-spacing:.13em; }
+.contactProfileIdentity h2 { margin:4px 0 2px !important; color:var(--text) !important; font-size:22px !important; line-height:1.15; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.contactProfileIdentity p { margin:0 !important; color:var(--muted) !important; font-size:11px !important; }
+.contactProfileClose {
+  display:grid !important; place-items:center !important; flex:0 0 38px; width:38px !important; height:38px !important;
+  border:1px solid var(--border) !important; border-radius:12px !important;
+  background:var(--surface-2) !important; color:var(--text) !important; font-size:21px !important; cursor:pointer;
+}
+.contactProfileClose:hover { border-color:var(--border-strong) !important; background:var(--surface-3) !important; }
+.contactProfileBody { flex:1 1 auto; min-height:0; overflow-y:auto; overscroll-behavior:contain; padding:22px 26px 32px; }
+.contactProfileLayer .profileQuickActions { display:flex; flex-wrap:wrap; gap:9px; margin:0 0 18px; }
+.contactProfileLayer .profileQuickActions a,
+.contactProfileLayer .supplierProfileProducts header a {
+  display:inline-flex; align-items:center; justify-content:center; min-height:40px; padding:9px 14px;
+  border:1px solid rgba(255,91,91,.34); border-radius:11px; background:var(--accent-soft) !important;
+  color:var(--accent-2,#ff7979) !important; text-decoration:none; font-size:11px; font-weight:800;
+}
+.contactProfileLayer .profileQuickActions a:first-child { background:linear-gradient(135deg,var(--accent),#ff665a) !important; color:#fff !important; box-shadow:0 8px 22px rgba(255,60,72,.22); }
+.contactProfileLayer .profileMetrics { display:grid !important; grid-template-columns:repeat(4,minmax(0,1fr)) !important; gap:10px !important; margin:0 0 18px !important; }
+.contactProfileLayer .profileMetrics span { min-width:0; padding:15px !important; border:1px solid var(--border) !important; border-radius:14px !important; background:var(--surface) !important; }
+.contactProfileLayer .profileMetrics small { color:var(--muted) !important; font-size:9px !important; }
+.contactProfileLayer .profileMetrics b { margin-top:7px !important; color:var(--text) !important; font-size:14px !important; white-space:nowrap; }
+.contactProfileLayer .profileTabs {
+  position:sticky !important; top:-22px !important; z-index:4 !important; display:flex !important; gap:7px !important;
+  margin:0 -2px 18px !important; padding:12px 2px !important; overflow-x:auto;
+  border-bottom:1px solid var(--border) !important; background:rgba(18,21,31,.94) !important;
+  -webkit-backdrop-filter:blur(20px); backdrop-filter:blur(20px);
+}
+.contactProfileLayer .profileTabs button { flex:0 0 auto; min-height:38px; padding:8px 13px !important; border:1px solid transparent !important; border-radius:11px !important; background:transparent !important; color:var(--muted) !important; font-size:10px; font-weight:800; cursor:pointer; }
+.contactProfileLayer .profileTabs button.active { border-color:rgba(255,91,91,.28) !important; background:var(--accent-soft) !important; color:var(--accent-2,#ff7979) !important; }
+.contactProfileLayer .profileTabs span { margin-left:5px; padding:2px 6px; border-radius:999px; background:var(--surface-3) !important; color:inherit !important; }
+.contactProfileContent { min-height:260px; }
+.contactProfileLayer .contactInfo { display:grid !important; grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:10px !important; margin:0 !important; padding:18px !important; border:1px solid var(--border) !important; border-radius:16px !important; background:var(--surface) !important; }
+.contactProfileLayer .contactInfo h3 { grid-column:1/-1; margin:0 0 5px !important; color:var(--text) !important; font-size:13px !important; }
+.contactProfileLayer .contactInfo p { display:grid; gap:6px; min-width:0; margin:0 !important; padding:12px !important; border:1px solid var(--border); border-radius:11px; background:var(--surface-2) !important; }
+.contactProfileLayer .contactInfo p b { color:var(--muted) !important; font-size:9px; }
+.contactProfileLayer .contactInfo p span { color:var(--text) !important; font-size:11px; overflow-wrap:anywhere; }
+.contactProfileLayer .supplierProfileProducts>header { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:0 !important; padding:0 0 14px !important; }
+.contactProfileLayer .supplierProfileProducts h3,.contactProfileLayer .profileHistory h3 { margin:0 0 4px !important; color:var(--text) !important; font-size:14px !important; }
+.contactProfileLayer .supplierProfileProducts header small { color:var(--muted) !important; }
+.contactProfileLayer .supplierProfileProducts>article { display:grid; grid-template-columns:minmax(190px,1.6fr) repeat(3,minmax(85px,.7fr)) auto; gap:12px; align-items:center; padding:14px; margin-bottom:8px; border:1px solid var(--border) !important; border-radius:13px; background:var(--surface) !important; }
+.contactProfileLayer .supplierProfileProducts article span,.contactProfileLayer .supplierProfileProducts article div { display:grid; gap:4px; min-width:0; }
+.contactProfileLayer .supplierProfileProducts article b { color:var(--text) !important; }
+.contactProfileLayer .supplierProfileProducts article small { color:var(--muted) !important; font-size:8px; overflow:hidden; text-overflow:ellipsis; }
+.contactProfileLayer .supplierProfileProducts article>a { color:var(--accent-2,#ff7979) !important; font-size:10px; font-weight:800; }
+.contactProfileLayer .profileLedger article { padding:13px 2px !important; border-color:var(--border) !important; }
+.contactProfileLayer .profileLedger i { background:var(--accent-soft) !important; color:var(--accent-2,#ff7979) !important; }
+.contactProfileLayer .profileLedger span b,.contactProfileLayer .profileLedger strong { color:var(--text) !important; }
+.contactProfileLayer .profileLedger span small { color:var(--muted) !important; }
+.contactProfileLayer .profileEmpty { min-height:190px; border-color:var(--border-strong) !important; background:var(--surface) !important; color:var(--muted) !important; }
+
+@media(max-width:900px) {
+  .contactProfileLayer .contactProfile { width:min(720px,100vw) !important; border-radius:20px 0 0 20px !important; }
+  .contactProfileLayer .profileMetrics { grid-template-columns:repeat(2,minmax(0,1fr)) !important; }
+  .contactProfileLayer .supplierProfileProducts>article { grid-template-columns:1fr 1fr; }
+  .contactProfileLayer .supplierProfileProducts>article>span { grid-column:1/-1; }
+}
+@media(max-width:600px) {
+  .contactProfileLayer .contactProfile { width:100vw !important; border-left:0 !important; border-radius:0 !important; }
+  .contactProfileLayer .contactProfileHeader { min-height:88px !important; padding:16px !important; }
+  .contactProfileIdentity>i { flex-basis:42px; width:42px; height:42px; border-radius:13px; }
+  .contactProfileIdentity h2 { font-size:18px !important; }
+  .contactProfileBody { padding:16px 14px 26px; }
+  .contactProfileLayer .profileQuickActions { display:grid; grid-template-columns:1fr 1fr; }
+  .contactProfileLayer .profileQuickActions a:first-child { grid-column:1/-1; }
+  .contactProfileLayer .profileMetrics { gap:8px !important; }
+  .contactProfileLayer .profileMetrics span { padding:12px !important; }
+  .contactProfileLayer .profileMetrics b { font-size:12px !important; }
+  .contactProfileLayer .profileTabs { top:-16px !important; margin-bottom:14px !important; }
+  .contactProfileLayer .contactInfo { grid-template-columns:1fr !important; padding:14px !important; }
+  .contactProfileLayer .contactInfo h3 { grid-column:auto; }
+  .contactProfileLayer .supplierProfileProducts>header { align-items:flex-start; }
+  .contactProfileLayer .supplierProfileProducts>article { grid-template-columns:1fr 1fr; }
+  .contactProfileLayer .supplierProfileProducts>article>span { grid-column:1/-1; }
+}
+
+/* =====================================================================
+   42. LOGIN — FITS SHORT VIEWPORTS TOO
+   Laptops at 1440x820 have roughly 728px of usable band between the top
+   bar and the footer, and the stack was ~800px. These tiers trim the
+   height budget by viewport height rather than width, so the page never
+   scrolls on a 768p or 800p screen.
+   ===================================================================== */
+@media (min-width:1024px) and (max-height:900px) {
+  .pfTopbar { padding-top:12px !important; padding-bottom:9px !important; }
+  .pfShell > .pfGrid { min-height:calc(100dvh - 100px) !important; }
+  .pfCard { padding:20px 34px 18px !important; }
+  .pfLogo { max-height:96px !important; margin:-6px auto -2px !important; }
+  .pfWelcome { margin-bottom:18px !important; }
+  .pfWelcome h2, .pfCard h2 { font-size:26px !important; }
+  .pfWelcome p { font-size:13.5px !important; }
+  .pfCredentials input:not([type="checkbox"]) { min-height:44px !important; }
+  .pfCredentials > label { margin-bottom:10px !important; }
+  .pfSecurityRow { margin-top:16px !important; padding-top:14px !important; }
+  .pfNetwork { height:180px !important; margin-top:14px !important; }
+  .pfHeadline h1 { font-size:clamp(34px, 3.5vw, 54px) !important; }
+  .pfLead { margin-top:16px !important; line-height:1.6 !important; }
+  .pfStats { gap:10px !important; }
+  .pfStatusStack { gap:9px !important; }
+  .pfStatusCard { min-height:60px !important; padding:10px 15px !important; }
+  .pfRight { gap:26px !important; }
+  .pfFooter { padding:9px 0 12px !important; }
+}
+
+@media (min-width:1024px) and (max-height:800px) {
+  .pfNetwork { height:120px !important; }
+  .pfLogo { max-height:78px !important; }
+  .pfWelcome h2, .pfCard h2 { font-size:24px !important; }
+  .pfCard { padding:17px 30px 15px !important; }
+  .pfHeadline h1 { font-size:clamp(30px, 3vw, 46px) !important; }
+  .pfStatusCard { min-height:54px !important; padding:9px 14px !important; }
+  .pfStats > div { gap:10px !important; }
+  .pfStatIcon { width:30px !important; height:30px !important; }
+  .pfStats strong { font-size:18px !important; }
+}
+
+@media (min-width:1024px) and (max-height:700px) {
+  .pfNetwork { display:none !important; }
+  .pfLead { display:none !important; }
+  .pfSecurityRow { display:none !important; }
+}
+
+/* =====================================================================
+   43. LOGIN ON PHONES
+   Section 40 set the card padding with !important, which overrode the
+   stylesheet's own narrow-screen padding and left the card only ~280px
+   of inner width. That is what wrapped "Trust this device" onto two
+   lines and clipped "Adaptive Access".
+   ===================================================================== */
+@media (max-width:1023px) {
+  .pfCard { padding:26px 22px 22px !important; }
+  .pfShell .pfTopbar { padding-top:14px !important; padding-bottom:10px !important; }
+}
+@media (max-width:479px) {
+  .pfCard { padding:22px 16px 18px !important; border-radius:24px !important; }
+  .pfLogo { max-height:86px !important; }
+  .pfWelcome { margin-bottom:16px !important; }
+  .pfWelcome h2, .pfCard h2 { font-size:25px !important; }
+  .pfWelcome p { font-size:13px !important; }
+  .pfShell input { font-size:13px !important; }
+  .pfCredentials input:not([type="checkbox"]) { min-height:46px !important; }
+  .pfCredentials .pfPasswordField input { padding-right:46px !important; }
+}
+
+/* the remember / forgot row keeps both halves on one line and only stacks
+   when the card genuinely cannot hold them side by side */
+.pfFormRow { flex-wrap:wrap; row-gap:8px; }
+.pfFormRow > * { white-space:nowrap; }
+.pfRemember { flex:0 1 auto; min-width:0; }
+.pfFormRow a { flex:0 0 auto; }
+@media (max-width:400px) {
+  .pfFormRow { font-size:11px !important; }
+  .pfRemember span { font-size:11px !important; }
+  .pfRemember input[type="checkbox"] { width:15px !important; height:15px !important; }
+}
+@media (max-width:330px) {
+  .pfFormRow { flex-direction:column; align-items:flex-start; }
+}
+
+/* the three trust markers wrap rather than truncate */
+.pfSecurityRow > div { padding:0 4px; }
+.pfSecurityRow span {
+  white-space:normal !important;
+  text-align:center;
+  line-height:1.3;
+  overflow-wrap:break-word;
+}
+@media (max-width:479px) {
+  .pfSecurityRow { margin-top:16px !important; padding-top:14px !important; }
+  .pfSecurityRow span, .pfSecurityRow > div { font-size:9.5px !important; }
+  .pfSecurityRow svg { width:18px !important; height:18px !important; }
+}
+
+/* =====================================================================
+   44. SHARED OVERLAYS — one visual and responsive contract
+   Application dialogs use dark liquid glass. Printable business documents
+   deliberately remain white paper for legible physical output.
+   ===================================================================== */
+:root { color-scheme:dark !important; }
+.themeToggle { display:none !important; }
+:is(.workflowModal,.transactionDialog,.registerGate,.actionDialogBackdrop,.documentModal,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) {
+  position:fixed !important;
+  inset:0 !important;
+  z-index:4000 !important;
+  display:grid !important;
+  place-items:center !important;
+  width:100vw !important;
+  height:100dvh !important;
+  padding:clamp(12px,2.2vw,28px) !important;
+  overflow:auto !important;
+  overscroll-behavior:contain;
+  background:rgba(3,6,14,.70) !important;
+  -webkit-backdrop-filter:blur(14px) saturate(120%) !important;
+  backdrop-filter:blur(14px) saturate(120%) !important;
+}
+
+:is(.workflowModal,.transactionDialog,.registerGate,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal) > :is(form,.actionDialog),
+.editGrnModal > section {
+  position:relative !important;
+  inset:auto !important;
+  width:min(720px,100%) !important;
+  max-width:100% !important;
+  max-height:calc(100dvh - clamp(24px,4.4vw,56px)) !important;
+  margin:auto !important;
+  padding:clamp(18px,2.4vw,28px) !important;
+  overflow:auto !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:var(--radius-xl) !important;
+  background:linear-gradient(145deg,rgba(35,37,48,.96),rgba(15,19,30,.97)) !important;
+  color:var(--text) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 32px 100px rgba(0,0,0,.58) !important;
+  -webkit-backdrop-filter:blur(32px) saturate(145%) !important;
+  backdrop-filter:blur(32px) saturate(145%) !important;
+}
+.receiveModal > form { width:min(1120px,100%) !important; padding:0 !important; }
+.editGrnModal > section { width:min(1180px,100%) !important; padding:0 !important; }
+.paymentModal > form,.userEditorDialog { width:min(680px,100%) !important; }
+
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) :is(h1,h2,h3,h4,b,strong,label) { color:var(--text) !important; }
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) :is(p,small,span) { color:var(--muted) !important; }
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) :is(header,footer,.formTitle,.receiveHeader,.receiveFooter) {
+  border-color:var(--border) !important;
+  background:transparent !important;
+}
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) :is(input,select,textarea) {
+  border:1px solid var(--border-strong) !important;
+  background:var(--surface-2) !important;
+  color:var(--text) !important;
+  color-scheme:dark;
+}
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) :is(input,select,textarea)::placeholder { color:var(--faint) !important; opacity:1; }
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) :is(input,select,textarea):focus {
+  outline:0 !important;
+  border-color:var(--accent) !important;
+  box-shadow:0 0 0 3px rgba(255,60,72,.14) !important;
+}
+
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) header > button,
+:is(.auditDrawer,.relatedDrawer,.priceHistoryPanel,.invoicePanel) header > button {
+  display:grid !important;
+  place-items:center !important;
+  width:36px !important;
+  height:36px !important;
+  padding:0 !important;
+  border:1px solid var(--border) !important;
+  border-radius:11px !important;
+  background:var(--surface-2) !important;
+  color:var(--text) !important;
+  font-size:19px !important;
+}
+
+/* Neutral and primary actions retain contrast regardless of older module CSS. */
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) footer button:not(.new):not(.primary):not(.primaryAction):not(.dangerButton) {
+  border:1px solid var(--border-strong) !important;
+  background:var(--surface-2) !important;
+  color:var(--text) !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08) !important;
+}
+:is(.workflowModal,.transactionDialog,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) footer :is(.new,.primary,.primaryAction) {
+  border-color:rgba(255,255,255,.18) !important;
+  background:linear-gradient(135deg,var(--brand),var(--brand-dark)) !important;
+  color:#fff !important;
+}
+
+/* Drawers are viewport anchored and scroll internally. */
+:is(.auditDrawer,.relatedDrawer,.priceHistoryPanel,.invoicePanel) {
+  position:fixed !important;
+  inset:0 0 0 auto !important;
+  z-index:4100 !important;
+  display:flex !important;
+  flex-direction:column !important;
+  width:min(680px,100vw) !important;
+  height:100dvh !important;
+  max-height:100dvh !important;
+  padding:0 !important;
+  overflow:auto !important;
+  overscroll-behavior:contain;
+  border:0 !important;
+  border-left:1px solid var(--glass-brd-2) !important;
+  border-radius:22px 0 0 22px !important;
+  background:linear-gradient(145deg,rgba(33,35,46,.97),rgba(13,18,29,.98)) !important;
+  color:var(--text) !important;
+  box-shadow:-28px 0 90px rgba(0,0,0,.56),inset 1px 0 rgba(255,255,255,.08) !important;
+  -webkit-backdrop-filter:blur(32px) saturate(145%) !important;
+  backdrop-filter:blur(32px) saturate(145%) !important;
+}
+:is(.auditDrawer,.relatedDrawer,.priceHistoryPanel,.invoicePanel) > header {
+  position:sticky !important;
+  top:0 !important;
+  z-index:3 !important;
+  flex:0 0 auto;
+  min-height:84px !important;
+  padding:19px 22px !important;
+  border-bottom:1px solid var(--border) !important;
+  background:rgba(20,23,34,.94) !important;
+  -webkit-backdrop-filter:blur(22px) !important;
+  backdrop-filter:blur(22px) !important;
+}
+:is(.auditDrawer,.relatedDrawer,.priceHistoryPanel,.invoicePanel) :is(h1,h2,h3,b,strong) { color:var(--text) !important; }
+:is(.auditDrawer,.relatedDrawer,.priceHistoryPanel,.invoicePanel) :is(p,small,span) { color:var(--muted) !important; }
+:is(.auditDrawer,.relatedDrawer,.priceHistoryPanel,.invoicePanel) > footer {
+  position:sticky !important;
+  bottom:0 !important;
+  z-index:3 !important;
+  margin-top:auto;
+  padding:14px 20px !important;
+  border-top:1px solid var(--border) !important;
+  background:rgba(20,23,34,.94) !important;
+  -webkit-backdrop-filter:blur(22px) !important;
+  backdrop-filter:blur(22px) !important;
+}
+.invoiceDocument { color:var(--text) !important; }
+.invoiceDocument :is(.invoiceMeta span,.invoiceTotals,.returnHistory) { border-color:var(--border) !important; background:var(--surface) !important; }
+.invoicePanel > footer button { border:1px solid var(--border) !important; background:var(--surface-2) !important; color:var(--text) !important; }
+.invoicePanel > footer button:nth-child(2) { border-color:transparent !important; background:linear-gradient(135deg,var(--brand),var(--brand-dark)) !important; color:#fff !important; }
+
+/* On-screen business document viewer. Paper colours are applied only while printing. */
+.documentModal .printDocument {
+  position:relative !important;
+  inset:auto !important;
+  width:min(980px,100%) !important;
+  max-width:100% !important;
+  max-height:calc(100dvh - clamp(24px,4.4vw,56px)) !important;
+  margin:auto !important;
+  padding:clamp(20px,3vw,34px) !important;
+  overflow:auto !important;
+  border:1px solid var(--glass-brd-2) !important;
+  border-radius:20px !important;
+  background:linear-gradient(145deg,rgba(34,36,47,.97),rgba(15,19,30,.98)) !important;
+  color:var(--text) !important;
+  color-scheme:dark;
+  box-shadow:0 32px 100px rgba(0,0,0,.56) !important;
+}
+.documentModal .printDocument :is(h1,h2,h3,h4,b,strong,td) { color:var(--text) !important; }
+.documentModal .printDocument :is(p,small,span) { color:var(--muted) !important; }
+.documentModal .printDocument > header { background:transparent !important; border-bottom:1px solid var(--border-strong) !important; }
+.documentModal .printDocument > header > button { border:1px solid var(--border) !important; background:var(--surface-2) !important; color:var(--text) !important; }
+.documentModal .printDocument .documentIdentity > div { border:1px solid var(--border) !important; background:var(--surface) !important; }
+.documentModal .printDocument th { background:rgba(255,255,255,.075) !important; color:var(--text) !important; }
+.documentModal .printDocument td { border-color:var(--border) !important; color:var(--text) !important; }
+.documentModal .printDocument .documentTotals { border:1px solid var(--border) !important; background:var(--surface) !important; }
+.documentModal .printDocument > footer { background:transparent !important; border-top:1px solid var(--border) !important; }
+.documentModal .printDocument > footer button:not(.new):not(.primary) { border:1px solid var(--border-strong) !important; background:var(--surface-2) !important; color:var(--text) !important; }
+.documentModal .printDocument > footer :is(.new,.primary) { border-color:#bd2634 !important; background:linear-gradient(135deg,#ef3f4e,#bd2634) !important; color:#fff !important; box-shadow:0 8px 20px rgba(189,38,52,.24) !important; }
+
+/* Legacy module interiors inherit the glass surface instead of painting white cards. */
+:is(.receiveModal,.paymentModal,.editGrnModal) :is(.receiveDocument,.receiveLines article,.paymentSummary span,.relatedTotals span,.procurementForm,.entrySection,.selectedSection) {
+  border-color:var(--border) !important;
+  background:var(--surface) !important;
+  color:var(--text) !important;
+}
+:is(.receiveModal,.paymentModal,.editGrnModal) .receiveLines article:not(.selected) { opacity:.72 !important; }
+:is(.receiveModal,.paymentModal,.editGrnModal) .receiveLines article.selected {
+  border-color:rgba(255,76,84,.38) !important;
+  background:var(--accent-soft) !important;
+}
+:is(.receiveModal,.paymentModal,.editGrnModal) .receiveLines article > strong { background:var(--surface-2) !important; color:var(--text) !important; }
+:is(.receiveModal,.paymentModal,.editGrnModal) :is(.paymentSummary,.relatedTotals) b { color:var(--text) !important; }
+.actionDialog { background:linear-gradient(145deg,rgba(35,37,48,.97),rgba(15,19,30,.98)) !important; color:var(--text) !important; }
+.actionDialog :is(h2,label) { color:var(--text) !important; }
+.actionDialog > p { color:var(--muted) !important; }
+.actionDialog textarea { background:var(--surface-2) !important; color:var(--text) !important; border-color:var(--border-strong) !important; }
+
+@media(max-width:700px) {
+  :is(.workflowModal,.transactionDialog,.registerGate,.actionDialogBackdrop,.documentModal,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) { padding:0 !important; align-items:end !important; }
+  :is(.workflowModal,.transactionDialog,.registerGate,.actionDialogBackdrop,.receiveModal,.paymentModal,.expiryModal) > :is(form,.actionDialog),
+  .editGrnModal > section {
+    width:100vw !important;
+    max-height:94dvh !important;
+    margin:0 !important;
+    padding:18px 16px calc(18px + env(safe-area-inset-bottom)) !important;
+    border-width:1px 0 0 !important;
+    border-radius:22px 22px 0 0 !important;
+  }
+  .receiveModal > form,.editGrnModal > section { padding:0 !important; }
+  :is(.auditDrawer,.relatedDrawer,.priceHistoryPanel,.invoicePanel) { width:100vw !important; border-left:0 !important; border-radius:0 !important; }
+  .documentModal .printDocument {
+    width:100vw !important;
+    max-height:94dvh !important;
+    margin:0 !important;
+    padding:18px 14px calc(18px + env(safe-area-inset-bottom)) !important;
+    border-width:1px 0 0 !important;
+    border-radius:20px 20px 0 0 !important;
+  }
+  .documentModal .documentIdentity { grid-template-columns:1fr 1fr !important; }
+  .documentModal .printDocument table { min-width:620px; }
+  .documentModal .printDocument > footer { position:sticky !important; bottom:-18px !important; gap:8px; padding:12px 0 0 !important; }
+  .documentModal .printDocument > footer button { flex:1; min-height:42px; }
+}
+
+@media print {
+  :is(.workflowModal,.transactionDialog,.registerGate,.actionDialogBackdrop,.documentModal,.receiveModal,.paymentModal,.expiryModal,.editGrnModal) {
+    position:static !important; display:block !important; width:auto !important; height:auto !important;
+    padding:0 !important; overflow:visible !important; background:#fff !important; backdrop-filter:none !important;
+  }
+  .documentModal .printDocument {
+    position:static !important; width:100% !important; max-height:none !important; padding:0 !important;
+    overflow:visible !important; border:0 !important; border-radius:0 !important; background:#fff !important;
+    color:#111 !important; color-scheme:light !important; box-shadow:none !important;
+  }
+  .documentModal .printDocument :is(h1,h2,h3,h4,b,strong,td,p,small,span) { color:#111 !important; }
+  .documentModal .printDocument > header { background:#fff !important; border-bottom:2px solid #111 !important; }
+  .documentModal .printDocument .documentIdentity > div,.documentModal .printDocument .documentTotals { border-color:#d6dbe3 !important; background:#f6f7f9 !important; }
+  .documentModal .printDocument th { background:#eef0f3 !important; color:#111 !important; border-bottom:2px solid #111 !important; }
+  .documentModal .printDocument td { border-color:#d6dbe3 !important; color:#111 !important; }
+}
+
+/* =====================================================================
+   44. LOGIN BETWEEN 480 AND 1023px
+   Below 1024 the two side columns are hidden, but `.pfGrid` still held a
+   `1fr minmax(420px,580px)` template, so the form landed in the narrow
+   first track and rendered 178px wide on an 844px landscape phone. Where
+   the side columns are gone the grid is a single centred column.
+   ===================================================================== */
+@media (max-width:1023px) {
+  .pfShell .pfGrid {
+    display:block !important;
+    grid-template-columns:none !important;
+    width:min(94vw, 560px) !important;
+    min-height:0 !important;
+    padding:18px 0 24px !important;
+  }
+  .pfShell .pfTopbar, .pfShell .pfFooter {
+    width:min(94vw, 560px) !important;
+  }
+  .pfShell .pfZone { width:100% !important; display:block !important; }
+  .pfShell .pfCard { width:100% !important; max-width:none !important; }
+  /* `.pfRight` here is the status column, not a layout wrapper */
+  .pfShell .pfRight { min-height:0 !important; padding:0 !important; }
+}
+
+/* Reconciliation rows name the subledger they were compared against, so a
+   dash in the Subledger column reads as "nothing owns this balance" rather
+   than as a missing number. */
+.reconSource {
+  display:block;
+  margin-top:2px;
+  font-size:11px;
+  letter-spacing:.02em;
+  color:var(--muted, #8a8f9a);
+  text-transform:none;
+}

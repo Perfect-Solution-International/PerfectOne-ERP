@@ -1,0 +1,5 @@
+import { ProcurementWorkspace } from "../../page";
+
+export default function Page() {
+  return <ProcurementWorkspace initialTab="Purchase orders" view="create" />;
+}

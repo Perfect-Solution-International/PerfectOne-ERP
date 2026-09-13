@@ -1,0 +1,123 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: grocerly
+      POSTGRES_USER: grocerly
+      POSTGRES_PASSWORD: grocerly
+    ports: ["5432:5432"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grocerly -d grocerly"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/migrations/001_initial_schema.sql:/docker-entrypoint-initdb.d/001_initial_schema.sql:ro
+      - ./database/migrations/002_demo_data.sql:/docker-entrypoint-initdb.d/002_demo_data.sql:ro
+      - ./database/migrations/003_usernames.sql:/docker-entrypoint-initdb.d/003_usernames.sql:ro
+      - ./database/migrations/004_operations.sql:/docker-entrypoint-initdb.d/004_operations.sql:ro
+      - ./database/migrations/005_demo_records.sql:/docker-entrypoint-initdb.d/005_demo_records.sql:ro
+      - ./database/migrations/006_customer_email.sql:/docker-entrypoint-initdb.d/006_customer_email.sql:ro
+      - ./database/migrations/007_tenants_and_branches.sql:/docker-entrypoint-initdb.d/007_tenants_and_branches.sql:ro
+      - ./database/migrations/008_accounting_audit.sql:/docker-entrypoint-initdb.d/008_accounting_audit.sql:ro
+      - ./database/migrations/009_accounting_triggers.sql:/docker-entrypoint-initdb.d/009_accounting_triggers.sql:ro
+      - ./database/migrations/010_pos_lifecycle.sql:/docker-entrypoint-initdb.d/010_pos_lifecycle.sql:ro
+      - ./database/migrations/011_ledgers_payments.sql:/docker-entrypoint-initdb.d/011_ledgers_payments.sql:ro
+      - ./database/migrations/012_ledger_opening_balances.sql:/docker-entrypoint-initdb.d/012_ledger_opening_balances.sql:ro
+      - ./database/migrations/013_stock_sessions_cash_accounting.sql:/docker-entrypoint-initdb.d/013_stock_sessions_cash_accounting.sql:ro
+      - ./database/migrations/014_cash_account_seed.sql:/docker-entrypoint-initdb.d/014_cash_account_seed.sql:ro
+      - ./database/migrations/015_pos_accounting_completion.sql:/docker-entrypoint-initdb.d/015_pos_accounting_completion.sql:ro
+      - ./database/migrations/016_security_hardening.sql:/docker-entrypoint-initdb.d/016_security_hardening.sql:ro
+      - ./database/migrations/017_management_crud.sql:/docker-entrypoint-initdb.d/017_management_crud.sql:ro
+      - ./database/migrations/018_user_permissions.sql:/docker-entrypoint-initdb.d/018_user_permissions.sql:ro
+      - ./database/migrations/019_user_lifecycle_and_history.sql:/docker-entrypoint-initdb.d/019_user_lifecycle_and_history.sql:ro
+      - ./database/migrations/020_roles_and_granular_permissions.sql:/docker-entrypoint-initdb.d/020_roles_and_granular_permissions.sql:ro
+      - ./database/migrations/021_product_management.sql:/docker-entrypoint-initdb.d/021_product_management.sql:ro
+      - ./database/migrations/022_catalog_taxonomy_and_barcodes.sql:/docker-entrypoint-initdb.d/022_catalog_taxonomy_and_barcodes.sql:ro
+      - ./database/migrations/023_contact_management.sql:/docker-entrypoint-initdb.d/023_contact_management.sql:ro
+      - ./database/migrations/024_procurement_inventory_workflows.sql:/docker-entrypoint-initdb.d/024_procurement_inventory_workflows.sql:ro
+      - ./database/migrations/025_supplier_product_catalogue.sql:/docker-entrypoint-initdb.d/025_supplier_product_catalogue.sql:ro
+      - ./database/migrations/026_transaction_safety.sql:/docker-entrypoint-initdb.d/026_transaction_safety.sql:ro
+      - ./database/migrations/027_payment_safety.sql:/docker-entrypoint-initdb.d/027_payment_safety.sql:ro
+      - ./database/migrations/028_accounting_foundation.sql:/docker-entrypoint-initdb.d/028_accounting_foundation.sql:ro
+      - ./database/migrations/029_inventory_ledger.sql:/docker-entrypoint-initdb.d/029_inventory_ledger.sql:ro
+      - ./database/migrations/030_sales_lifecycle.sql:/docker-entrypoint-initdb.d/030_sales_lifecycle.sql:ro
+      - ./database/migrations/031_procurement_safety.sql:/docker-entrypoint-initdb.d/031_procurement_safety.sql:ro
+      - ./database/migrations/032_purchase_order_safety.sql:/docker-entrypoint-initdb.d/032_purchase_order_safety.sql:ro
+      - ./database/migrations/033_stock_transfer_safety.sql:/docker-entrypoint-initdb.d/033_stock_transfer_safety.sql:ro
+      - ./database/migrations/034_inventory_loss_safety.sql:/docker-entrypoint-initdb.d/034_inventory_loss_safety.sql:ro
+      - ./database/migrations/035_branch_inventory_integration.sql:/docker-entrypoint-initdb.d/035_branch_inventory_integration.sql:ro
+      - ./database/migrations/036_inventory_accounting_controls.sql:/docker-entrypoint-initdb.d/036_inventory_accounting_controls.sql:ro
+      - ./database/migrations/037_expiry_permissions.sql:/docker-entrypoint-initdb.d/037_expiry_permissions.sql:ro
+      - ./database/migrations/038_batch_cost_accounting.sql:/docker-entrypoint-initdb.d/038_batch_cost_accounting.sql:ro
+      - ./database/migrations/039_purchase_order_batches.sql:/docker-entrypoint-initdb.d/039_purchase_order_batches.sql:ro
+      - ./database/migrations/040_cashier_session_control.sql:/docker-entrypoint-initdb.d/040_cashier_session_control.sql:ro
+      - ./database/migrations/041_finance_accounting_workflows.sql:/docker-entrypoint-initdb.d/041_finance_accounting_workflows.sql:ro
+      - ./database/migrations/042_procurement_receiving_integrity.sql:/docker-entrypoint-initdb.d/042_procurement_receiving_integrity.sql:ro
+      - ./database/migrations/043_procurement_completion.sql:/docker-entrypoint-initdb.d/043_procurement_completion.sql:ro
+      - ./database/migrations/044_pos_sales_completion.sql:/docker-entrypoint-initdb.d/044_pos_sales_completion.sql:ro
+      - ./database/migrations/045_cashier_sales_controls.sql:/docker-entrypoint-initdb.d/045_cashier_sales_controls.sql:ro
+      - ./database/migrations/046_accounting_completion.sql:/docker-entrypoint-initdb.d/046_accounting_completion.sql:ro
+      - ./database/migrations/047_inventory_approvals.sql:/docker-entrypoint-initdb.d/047_inventory_approvals.sql:ro
+      - ./database/migrations/048_batch_transfers.sql:/docker-entrypoint-initdb.d/048_batch_transfers.sql:ro
+      - ./database/migrations/049_pos_discount_approvals.sql:/docker-entrypoint-initdb.d/049_pos_discount_approvals.sql:ro
+      - ./database/migrations/050_payment_cheques.sql:/docker-entrypoint-initdb.d/050_payment_cheques.sql:ro
+      - ./database/migrations/051_branch_management.sql:/docker-entrypoint-initdb.d/051_branch_management.sql:ro
+      - ./database/migrations/052_transfer_documents.sql:/docker-entrypoint-initdb.d/052_transfer_documents.sql:ro
+      - ./database/migrations/053_system_settings.sql:/docker-entrypoint-initdb.d/053_system_settings.sql:ro
+      - ./database/migrations/054_data_imports.sql:/docker-entrypoint-initdb.d/054_data_imports.sql:ro
+      - ./database/migrations/055_backup_history.sql:/docker-entrypoint-initdb.d/055_backup_history.sql:ro
+      - ./database/migrations/056_partial_stock_transfers.sql:/docker-entrypoint-initdb.d/056_partial_stock_transfers.sql:ro
+      - ./database/migrations/057_scheduled_backups.sql:/docker-entrypoint-initdb.d/057_scheduled_backups.sql:ro
+      - ./database/migrations/058_accounting_ledger_integrity.sql:/docker-entrypoint-initdb.d/058_accounting_ledger_integrity.sql:ro
+      - ./database/migrations/059_transfer_damage_accounting.sql:/docker-entrypoint-initdb.d/059_transfer_damage_accounting.sql:ro
+      - ./database/migrations/060_promotions.sql:/docker-entrypoint-initdb.d/060_promotions.sql:ro
+      - ./database/migrations/061_settings_integration.sql:/docker-entrypoint-initdb.d/061_settings_integration.sql:ro
+      - ./database/migrations/062_notifications_archive_centre.sql:/docker-entrypoint-initdb.d/062_notifications_archive_centre.sql:ro
+      - ./database/migrations/063_offline_sync_hardening.sql:/docker-entrypoint-initdb.d/063_offline_sync_hardening.sql:ro
+      - ./database/migrations/064_accounting_core_structure.sql:/docker-entrypoint-initdb.d/064_accounting_core_structure.sql:ro
+      - ./database/migrations/065_cash_account_control_types.sql:/docker-entrypoint-initdb.d/065_cash_account_control_types.sql:ro
+      - ./database/migrations/066_sale_posting_single_source.sql:/docker-entrypoint-initdb.d/066_sale_posting_single_source.sql:ro
+      - ./database/migrations/067_control_account_reconciliation.sql:/docker-entrypoint-initdb.d/067_control_account_reconciliation.sql:ro
+      - ./database/migrations/068_balance_date_filter_fix.sql:/docker-entrypoint-initdb.d/068_balance_date_filter_fix.sql:ro
+      - ./database/migrations/069_measurement_and_unit_conversions.sql:/docker-entrypoint-initdb.d/069_measurement_and_unit_conversions.sql:ro
+  migrations:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: grocerly
+      POSTGRES_USER: grocerly
+      POSTGRES_PASSWORD: grocerly
+    volumes:
+      - ./database/migrations:/migrations:ro
+      - ./database/run-migrations.sh:/run-migrations.sh:ro
+    entrypoint: ["/bin/sh", "/run-migrations.sh"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+  api:
+    build: ./services/api
+    environment:
+      DATABASE_URL: postgres://grocerly:grocerly@postgres:5432/grocerly?sslmode=disable
+      WEB_ORIGIN: http://localhost:3001
+      JWT_SECRET: grocerly-dev-secret-change-me
+    ports: ["8080:8080"]
+    volumes:
+      - ./backups:/backups
+    depends_on:
+      migrations:
+        condition: service_completed_successfully
+  web:
+    build:
+      context: ./apps/web
+      args:
+        API_INTERNAL_URL: http://api:8080
+    environment:
+      API_INTERNAL_URL: http://api:8080
+    ports: ["3001:3000"]
+    depends_on:
+      api:
+        condition: service_started
+volumes:
+  postgres_data:
