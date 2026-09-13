@@ -1,3 +1,9 @@
+# Pinned so the compose project (and therefore the postgres data volume) no longer
+# depends on what this directory happens to be called. Renaming the folder without
+# this would make compose look for a volume that does not exist and silently start
+# with an empty database.
+name: perfectone-erp
+
 services:
   postgres:
     image: postgres:16-alpine
